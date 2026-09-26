@@ -1,0 +1,6 @@
+node_modules
+.env
+.env.local
+.env.*.local
+# Keep .env.example (template, no real secrets)
+!.env.example
