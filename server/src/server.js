@@ -14,12 +14,29 @@ const PORT = process.env.PORT || 5001;
 // Security & Parsing Middleware
 app.disable('x-powered-by');
 
-// Restrict CORS in dev/prod
+// Allow local + production frontend
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(cors({
-  origin: 'http://localhost:5173', // Frontend URL
+  origin: (origin, callback) => {
+    // Allow requests without an Origin header
+    // (for example, server-to-server requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  },
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Accept'],
-  credentials: true, // Required for cookie-based session
+  credentials: true,
 }));
 
 // Basic security response headers
@@ -42,13 +59,23 @@ app.use('/api/google', googleRoutes);
 
 // 404 for unknown endpoints
 app.use((req, res) => {
-  res.status(404).json({ success: false, error: 'Endpoint not found.' });
+  res.status(404).json({
+    success: false,
+    error: 'Endpoint not found.',
+  });
 });
 
 // Centralized error handler
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`[SEOly Server] Backend running smoothly on http://localhost:${PORT}`);
-});
+// Vercel/serverless export
+module.exports = app;
+
+// Local development server
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(
+      `[SEO++ Server] Backend running smoothly on http://localhost:${PORT}`
+    );
+  });
+}
