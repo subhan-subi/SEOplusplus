@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 /**
  * Normalizes input URL string on the client before submission
@@ -23,11 +23,10 @@ export async function analyzeWebsite(url) {
     const cleanUrl = sanitizeClientUrl(url);
     const response = await axios.post(`${API_BASE}/analyze`, { url: cleanUrl }, {
       headers: { 'Content-Type': 'application/json' },
-      timeout: 25000 // 25s timeout for complete audit
+      timeout: 25000
     });
 
     if (response.data && response.data.success) {
-      // Save last audit to sessionStorage for refresh retention
       try {
         sessionStorage.setItem('seoly_last_audit', JSON.stringify(response.data));
       } catch (e) {
