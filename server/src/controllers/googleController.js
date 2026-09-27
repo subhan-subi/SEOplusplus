@@ -1,10 +1,15 @@
 /**
  * Google OAuth + Search Console controller.
- * FRONTEND_URL env var controls the redirect target (defaults to localhost:5173).
- * Handles all /api/google/* endpoints.
+ * FRONTEND_URL env var controls the redirect target.
  * Client Secret is NEVER exposed to the frontend.
+ *
+ * OAuth state is stateless/signed so it works correctly on
+ * Vercel serverless deployments where in-memory state cannot
+ * be relied upon between requests.
  */
+
 const crypto = require('crypto');
+
 const {
   getAuthUrl,
   exchangeCodeForTokens,
@@ -12,24 +17,131 @@ const {
   getSearchPerformance,
 } = require('../services/googleAuthService');
 
-// In-memory token store (session-keyed).
-// For production, swap this with a DB (Redis, Postgres, etc.)
-// without changing any frontend code or route signatures.
+// Temporary in-memory token store.
+// NOTE: This is still used for the connected session.
+// Persistent storage should be used for long-term production sessions.
 const tokenStore = new Map();
 
-// ── Helper ────────────────────────────────────────────────────────────────────
+// ── Configuration ────────────────────────────────────────────────────────────
+
+const FRONTEND =
+  process.env.FRONTEND_URL || 'http://localhost:5173';
+
+const GSC_PATH =
+  `${FRONTEND}/tools/search-console`;
+
+const STATE_SECRET =
+  process.env.GOOGLE_OAUTH_STATE_SECRET ||
+  process.env.GOOGLE_CLIENT_SECRET;
+
+// ── OAuth State Helpers ───────────────────────────────────────────────────────
+
+/**
+ * Creates a signed OAuth state value.
+ *
+ * Format:
+ * base64url(payload).signature
+ *
+ * Payload contains:
+ * - sessionId
+ * - timestamp
+ * - random nonce
+ */
+function createOAuthState(sessionId) {
+  const payload = {
+    sessionId,
+    timestamp: Date.now(),
+    nonce: crypto.randomBytes(16).toString('hex'),
+  };
+
+  const encodedPayload = Buffer
+    .from(JSON.stringify(payload))
+    .toString('base64url');
+
+  const signature = crypto
+    .createHmac('sha256', STATE_SECRET)
+    .update(encodedPayload)
+    .digest('base64url');
+
+  return `${encodedPayload}.${signature}`;
+}
+
+/**
+ * Verifies and decodes OAuth state.
+ *
+ * State expires after 10 minutes.
+ */
+function verifyOAuthState(state) {
+  if (!state || typeof state !== 'string') {
+    return null;
+  }
+
+  const parts = state.split('.');
+
+  if (parts.length !== 2) {
+    return null;
+  }
+
+  const [encodedPayload, receivedSignature] = parts;
+
+  const expectedSignature = crypto
+    .createHmac('sha256', STATE_SECRET)
+    .update(encodedPayload)
+    .digest('base64url');
+
+  const receivedBuffer = Buffer.from(receivedSignature);
+  const expectedBuffer = Buffer.from(expectedSignature);
+
+  if (
+    receivedBuffer.length !== expectedBuffer.length ||
+    !crypto.timingSafeEqual(receivedBuffer, expectedBuffer)
+  ) {
+    return null;
+  }
+
+  try {
+    const payload = JSON.parse(
+      Buffer
+        .from(encodedPayload, 'base64url')
+        .toString('utf8')
+    );
+
+    // OAuth state is valid for 10 minutes.
+    const maxAge = 10 * 60 * 1000;
+
+    if (
+      !payload.timestamp ||
+      Date.now() - payload.timestamp > maxAge
+    ) {
+      return null;
+    }
+
+    if (!payload.sessionId) {
+      return null;
+    }
+
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+// ── Session Helper ────────────────────────────────────────────────────────────
 
 function getSession(req, res) {
   let sessionId = req.cookies?.gsc_session;
+
   if (!sessionId) {
     sessionId = crypto.randomUUID();
+
     res.cookie('gsc_session', sessionId, {
       httpOnly: true,
-      sameSite: 'lax',
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'none',
+      secure: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
   }
+
   return sessionId;
 }
 
@@ -37,19 +149,18 @@ function getSession(req, res) {
 
 /**
  * GET /api/google/auth
- * Initiates Google OAuth flow. Redirects user to Google's consent screen.
+ *
+ * Initiates Google OAuth flow.
  */
 async function startAuth(req, res, next) {
   try {
     const sessionId = getSession(req, res);
-    // CSRF state: bind the session to the OAuth state param
-    const state = `${sessionId}.${crypto.randomBytes(16).toString('hex')}`;
 
-    // Store state temporarily to validate on callback
-    const existing = tokenStore.get(sessionId) || {};
-    tokenStore.set(sessionId, { ...existing, pendingState: state });
+    // Create a stateless signed state.
+    const state = createOAuthState(sessionId);
 
     const authUrl = getAuthUrl(state);
+
     res.redirect(authUrl);
   } catch (err) {
     next(err);
@@ -58,122 +169,226 @@ async function startAuth(req, res, next) {
 
 /**
  * GET /api/google/callback
- * Google redirects here after user approves. Exchanges code for tokens.
+ *
+ * Google redirects here after user approves access.
  */
 async function handleCallback(req, res, next) {
   try {
-    const { code, state, error } = req.query;
-
-    const FRONTEND = process.env.FRONTEND_URL || 'http://localhost:5173';
-    const GSC_PATH = `${FRONTEND}/tools/search-console`;
+    const {
+      code,
+      state,
+      error,
+    } = req.query;
 
     if (error) {
-      // User denied access
-      return res.redirect(`${GSC_PATH}?error=access_denied`);
+      return res.redirect(
+        `${GSC_PATH}?error=access_denied`
+      );
     }
 
     if (!code || !state) {
-      return res.redirect(`${GSC_PATH}?error=invalid_callback`);
+      return res.redirect(
+        `${GSC_PATH}?error=invalid_callback`
+      );
     }
 
-    // Validate CSRF state
+    // Verify signed OAuth state.
+    const statePayload = verifyOAuthState(state);
+
+    if (!statePayload) {
+      console.warn(
+        '[Google OAuth] Invalid or expired OAuth state.'
+      );
+
+      return res.redirect(
+        `${GSC_PATH}?error=state_mismatch`
+      );
+    }
+
+    // Make sure the browser session matches the session
+    // that originally started the OAuth flow.
     const sessionId = req.cookies?.gsc_session;
-    const sessionData = sessionId ? tokenStore.get(sessionId) : null;
 
-    if (!sessionData || sessionData.pendingState !== state) {
-      return res.redirect(`${GSC_PATH}?error=state_mismatch`);
+    if (!sessionId || sessionId !== statePayload.sessionId) {
+      console.warn(
+        '[Google OAuth] Session mismatch during callback.'
+      );
+
+      return res.redirect(
+        `${GSC_PATH}?error=state_mismatch`
+      );
     }
 
-    // Exchange code for tokens
+    // Exchange authorization code for Google tokens.
     const tokens = await exchangeCodeForTokens(code);
 
-    // Store tokens (clear pending state)
+    // Preserve any existing session information.
+    const existingSession =
+      tokenStore.get(sessionId) || {};
+
     tokenStore.set(sessionId, {
+      ...existingSession,
       tokens,
-      selectedSite: sessionData.selectedSite || null,
+      selectedSite:
+        existingSession.selectedSite || null,
     });
 
-    res.redirect(`${GSC_PATH}?connected=true`);
+    return res.redirect(
+      `${GSC_PATH}?connected=true`
+    );
   } catch (err) {
-    const FRONTEND = process.env.FRONTEND_URL || 'http://localhost:5173';
-    console.error('[Google Callback Error]:', err.message);
-    res.redirect(`${FRONTEND}/tools/search-console?error=auth_failed`);
+    console.error(
+      '[Google Callback Error]:',
+      err.message
+    );
+
+    return res.redirect(
+      `${GSC_PATH}?error=auth_failed`
+    );
   }
 }
 
 /**
  * GET /api/google/status
+ *
  * Returns connection status for the current session.
  */
 function getStatus(req, res) {
-  const sessionId = req.cookies?.gsc_session;
-  const sessionData = sessionId ? tokenStore.get(sessionId) : null;
+  const sessionId =
+    req.cookies?.gsc_session;
 
-  const connected = !!(sessionData?.tokens?.access_token);
+  const sessionData =
+    sessionId
+      ? tokenStore.get(sessionId)
+      : null;
+
+  const connected =
+    !!(sessionData?.tokens?.access_token);
+
   res.json({
     success: true,
     connected,
-    selectedSite: sessionData?.selectedSite || null,
+    selectedSite:
+      sessionData?.selectedSite || null,
   });
 }
 
 /**
  * GET /api/google/properties
- * Lists Search Console properties for the connected Google account.
+ *
+ * Lists Search Console properties for connected account.
  */
 async function getProperties(req, res, next) {
   try {
-    const sessionId = req.cookies?.gsc_session;
-    const sessionData = sessionId ? tokenStore.get(sessionId) : null;
+    const sessionId =
+      req.cookies?.gsc_session;
+
+    const sessionData =
+      sessionId
+        ? tokenStore.get(sessionId)
+        : null;
 
     if (!sessionData?.tokens) {
-      return res.status(401).json({ success: false, error: 'Not connected to Google. Please authorize first.' });
+      return res.status(401).json({
+        success: false,
+        error:
+          'Not connected to Google. Please authorize first.',
+      });
     }
 
-    const properties = await getSearchConsoleProperties(sessionData.tokens);
-    res.json({ success: true, properties });
-  } catch (err) {
-    // Extract safe error details — never log token values
-    const status = err.gscStatus || err.status || err.code;
-    const message = err.gscMessage || err.message || 'Failed to fetch properties.';
-    console.error(`[GSC Properties Error] HTTP ${status}: ${message}`);
+    const properties =
+      await getSearchConsoleProperties(
+        sessionData.tokens
+      );
 
-    // Detect auth/token errors by numeric or string status code
-    const isAuthError = status === 401 || status === '401' ||
+    res.json({
+      success: true,
+      properties,
+    });
+  } catch (err) {
+    const status =
+      err.gscStatus ||
+      err.status ||
+      err.code;
+
+    const message =
+      err.gscMessage ||
+      err.message ||
+      'Failed to fetch properties.';
+
+    console.error(
+      `[GSC Properties Error] HTTP ${status}: ${message}`
+    );
+
+    const isAuthError =
+      status === 401 ||
+      status === '401' ||
       err.message?.includes('invalid_grant') ||
       err.message?.includes('Token has been expired');
+
     if (isAuthError) {
-      return res.status(401).json({ success: false, error: 'Google session expired. Please reconnect.' });
+      return res.status(401).json({
+        success: false,
+        error:
+          'Google session expired. Please reconnect.',
+      });
     }
-    // Surface the real Google error (safe — no token/secret in message)
-    return res.status(status >= 400 && status < 600 ? status : 500).json({
+
+    return res.status(
+      status >= 400 && status < 600
+        ? status
+        : 500
+    ).json({
       success: false,
-      error: `Google Search Console error: ${message}`,
+      error:
+        `Google Search Console error: ${message}`,
     });
   }
 }
 
 /**
  * POST /api/google/select-property
- * Stores the user's selected Search Console property.
- * Body: { siteUrl: "https://example.com/" }
  */
 async function selectProperty(req, res, next) {
   try {
-    const sessionId = req.cookies?.gsc_session;
-    const sessionData = sessionId ? tokenStore.get(sessionId) : null;
+    const sessionId =
+      req.cookies?.gsc_session;
+
+    const sessionData =
+      sessionId
+        ? tokenStore.get(sessionId)
+        : null;
 
     if (!sessionData?.tokens) {
-      return res.status(401).json({ success: false, error: 'Not connected to Google.' });
+      return res.status(401).json({
+        success: false,
+        error:
+          'Not connected to Google.',
+      });
     }
 
     const { siteUrl } = req.body;
-    if (!siteUrl || typeof siteUrl !== 'string') {
-      return res.status(400).json({ success: false, error: 'siteUrl is required.' });
+
+    if (
+      !siteUrl ||
+      typeof siteUrl !== 'string'
+    ) {
+      return res.status(400).json({
+        success: false,
+        error:
+          'siteUrl is required.',
+      });
     }
 
-    tokenStore.set(sessionId, { ...sessionData, selectedSite: siteUrl });
-    res.json({ success: true, selectedSite: siteUrl });
+    tokenStore.set(sessionId, {
+      ...sessionData,
+      selectedSite: siteUrl,
+    });
+
+    res.json({
+      success: true,
+      selectedSite: siteUrl,
+    });
   } catch (err) {
     next(err);
   }
@@ -181,80 +396,139 @@ async function selectProperty(req, res, next) {
 
 /**
  * GET /api/google/search-performance
- * Fetches Search Console performance data for the selected property.
- * Optional query: ?days=28
  */
 async function searchPerformance(req, res, next) {
   try {
-    const sessionId = req.cookies?.gsc_session;
-    const sessionData = sessionId ? tokenStore.get(sessionId) : null;
+    const sessionId =
+      req.cookies?.gsc_session;
+
+    const sessionData =
+      sessionId
+        ? tokenStore.get(sessionId)
+        : null;
 
     if (!sessionData?.tokens) {
-      return res.status(401).json({ success: false, error: 'Not connected to Google.' });
+      return res.status(401).json({
+        success: false,
+        error:
+          'Not connected to Google.',
+      });
     }
+
     if (!sessionData.selectedSite) {
-      return res.status(400).json({ success: false, error: 'No Search Console property selected.' });
+      return res.status(400).json({
+        success: false,
+        error:
+          'No Search Console property selected.',
+      });
     }
 
-    const days = parseInt(req.query.days, 10) || 28;
-    const data = await getSearchPerformance(sessionData.tokens, sessionData.selectedSite, days);
-    res.json({ success: true, ...data });
-  } catch (err) {
-    // Extract safe error details — never log token values
-    const status = err.gscStatus || err.status || err.code;
-    const message = err.gscMessage || err.message || 'Failed to fetch performance data.';
-    console.error(`[GSC Performance Error] HTTP ${status}: ${message}`);
+    const days =
+      parseInt(req.query.days, 10) || 28;
 
-    // Detect auth/token errors
-    const isAuthError = status === 401 || status === '401' ||
+    const data =
+      await getSearchPerformance(
+        sessionData.tokens,
+        sessionData.selectedSite,
+        days
+      );
+
+    res.json({
+      success: true,
+      ...data,
+    });
+  } catch (err) {
+    const status =
+      err.gscStatus ||
+      err.status ||
+      err.code;
+
+    const message =
+      err.gscMessage ||
+      err.message ||
+      'Failed to fetch performance data.';
+
+    console.error(
+      `[GSC Performance Error] HTTP ${status}: ${message}`
+    );
+
+    const isAuthError =
+      status === 401 ||
+      status === '401' ||
       message.includes('invalid_grant') ||
       message.includes('Token has been expired') ||
       message.includes('UNAUTHENTICATED');
+
     if (isAuthError) {
-      return res.status(401).json({ success: false, error: 'Google session expired. Please reconnect.' });
+      return res.status(401).json({
+        success: false,
+        error:
+          'Google session expired. Please reconnect.',
+      });
     }
 
-    // Detect permission errors
-    const isForbidden = status === 403 || status === '403' ||
+    const isForbidden =
+      status === 403 ||
+      status === '403' ||
       message.includes('PERMISSION_DENIED') ||
-      message.includes('does not have sufficient permission') ||
-      message.includes('User does not have any Search Console');
+      message.includes(
+        'does not have sufficient permission'
+      ) ||
+      message.includes(
+        'User does not have any Search Console'
+      );
+
     if (isForbidden) {
       return res.status(403).json({
         success: false,
-        error: `Access denied: ${message}. Make sure the Google account has access to this Search Console property.`,
+        error:
+          `Access denied: ${message}. Make sure the Google account has access to this Search Console property.`,
       });
     }
 
-    // Detect invalid property / URL format errors
-    const isBadRequest = status === 400 || status === '400';
+    const isBadRequest =
+      status === 400 ||
+      status === '400';
+
     if (isBadRequest) {
       return res.status(400).json({
         success: false,
-        error: `Invalid request: ${message}. Check that the property URL exactly matches the verified Search Console property.`,
+        error:
+          `Invalid request: ${message}. Check that the property URL exactly matches the verified Search Console property.`,
       });
     }
 
-    // Generic Google API error — surface safe message instead of 500
-    const httpStatus = Number.isInteger(status) && status >= 400 && status < 600 ? status : 502;
+    const httpStatus =
+      Number.isInteger(status) &&
+        status >= 400 &&
+        status < 600
+        ? status
+        : 502;
+
     return res.status(httpStatus).json({
       success: false,
-      error: `Google Search Console API error (${status}): ${message}`,
+      error:
+        `Google Search Console API error (${status}): ${message}`,
     });
   }
 }
 
 /**
  * POST /api/google/disconnect
- * Clears the Google session / tokens.
  */
 function disconnect(req, res) {
-  const sessionId = req.cookies?.gsc_session;
+  const sessionId =
+    req.cookies?.gsc_session;
+
   if (sessionId) {
     tokenStore.delete(sessionId);
   }
+
   res.clearCookie('gsc_session');
-  res.json({ success: true });
+
+  res.json({
+    success: true,
+  });
 }
 
 module.exports = {
