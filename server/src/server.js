@@ -56,6 +56,18 @@ app.use(cookieParser());
 
 // API routes
 app.use('/api', seoRoutes);
+
+// Ensure DB connection is active before processing Google routes (critical for Vercel cold starts)
+app.use('/api/google', async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('[DB] Failed to connect for /api/google request:', err.message);
+    next(err);
+  }
+});
+
 app.use('/api/google', googleRoutes);
 
 // 404 for unknown endpoints

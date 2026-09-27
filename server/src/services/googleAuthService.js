@@ -225,4 +225,5 @@ module.exports = {
   exchangeCodeForTokens,
   getSearchConsoleProperties,
   getSearchPerformance,
+  extractGoogleError,
 };

@@ -15,9 +15,11 @@ const {
   exchangeCodeForTokens,
   getSearchConsoleProperties,
   getSearchPerformance,
+  extractGoogleError,
 } = require('../services/googleAuthService');
 
 const GoogleOAuthSession = require('../models/GoogleOAuthSession');
+const { connectDB } = require('../config/database');
 
 // ── Configuration ────────────────────────────────────────────────────────────
 
@@ -216,9 +218,24 @@ async function handleCallback(req, res, next) {
     // that originally started the OAuth flow.
     const sessionId = req.cookies?.gsc_session;
 
+    // Safe diagnostic log (never logs tokens, secrets, or codes)
+    console.log('[Google OAuth Callback] Diagnostics:', {
+      hasCode: !!code,
+      hasState: !!state,
+      stateVerificationPassed: !!statePayload,
+      hasSessionCookie: !!sessionId,
+      sessionMatchesState: Boolean(
+        sessionId && statePayload && sessionId === statePayload.sessionId
+      ),
+    });
+
     if (!sessionId || sessionId !== statePayload.sessionId) {
       console.warn(
-        '[Google OAuth] Session mismatch during callback.'
+        '[Google OAuth] Session mismatch during callback.',
+        {
+          hasCookie: !!sessionId,
+          hasStateSession: !!statePayload?.sessionId,
+        }
       );
 
       return res.redirect(
@@ -227,30 +244,49 @@ async function handleCallback(req, res, next) {
     }
 
     // Exchange authorization code for Google tokens.
-    const newTokens = await exchangeCodeForTokens(code);
+    let newTokens;
+    try {
+      newTokens = await exchangeCodeForTokens(code);
+      console.log('[Google OAuth Callback] Token exchange: SUCCESS');
+    } catch (tokenErr) {
+      const sanitized = extractGoogleError(tokenErr);
+      console.error('[Google OAuth Callback] Token exchange: FAILED', {
+        status: sanitized.status || 'UNKNOWN',
+        error: sanitized.message,
+      });
+      throw tokenErr;
+    }
 
     // Preserve existing session data (selectedSite + existing refresh_token
     // if Google did not issue a new one).
-    const existing = await GoogleOAuthSession.findOne({ sessionId }).lean();
+    try {
+      await connectDB();
+      const existing = await GoogleOAuthSession.findOne({ sessionId }).lean();
 
-    const mergedTokens = {
-      ...(existing?.tokens || {}),
-      ...newTokens,
-      // Keep existing refresh_token when Google omits it in the response
-      refresh_token:
-        newTokens.refresh_token ||
-        existing?.tokens?.refresh_token ||
-        null,
-    };
+      const mergedTokens = {
+        ...(existing?.tokens || {}),
+        ...newTokens,
+        // Keep existing refresh_token when Google omits it in the response
+        refresh_token:
+          newTokens.refresh_token ||
+          existing?.tokens?.refresh_token ||
+          null,
+      };
 
-    await GoogleOAuthSession.findOneAndUpdate(
-      { sessionId },
-      {
-        tokens: mergedTokens,
-        selectedSite: existing?.selectedSite || null,
-      },
-      { upsert: true, new: true }
-    );
+      await GoogleOAuthSession.findOneAndUpdate(
+        { sessionId },
+        {
+          tokens: mergedTokens,
+          selectedSite: existing?.selectedSite || null,
+        },
+        { upsert: true, new: true }
+      );
+
+      console.log('[Google OAuth Callback] MongoDB session save: SUCCESS');
+    } catch (dbErr) {
+      console.error('[Google OAuth Callback] MongoDB session save: FAILED:', dbErr.message);
+      throw dbErr;
+    }
 
     // Refresh session cookie on callback with full TTL and Partitioned attribute
     res.cookie('gsc_session', sessionId, COOKIE_OPTIONS);
@@ -259,9 +295,10 @@ async function handleCallback(req, res, next) {
       `${GSC_PATH}?connected=true`
     );
   } catch (err) {
+    const sanitized = extractGoogleError(err);
     console.error(
       '[Google Callback Error]:',
-      err.message
+      sanitized.message || err.message
     );
 
     return res.redirect(
