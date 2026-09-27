@@ -129,7 +129,6 @@ const COOKIE_OPTIONS = {
   httpOnly: true,
   sameSite: 'none',
   secure: true,
-  partitioned: true,
   maxAge: 30 * 24 * 60 * 60 * 1000,
 };
 
@@ -137,7 +136,6 @@ const CLEAR_COOKIE_OPTIONS = {
   httpOnly: true,
   sameSite: 'none',
   secure: true,
-  partitioned: true,
 };
 
 // ── Session Helper ────────────────────────────────────────────────────────────
@@ -147,9 +145,11 @@ function getSession(req, res) {
 
   if (!sessionId) {
     sessionId = crypto.randomUUID();
-
-    res.cookie('gsc_session', sessionId, COOKIE_OPTIONS);
   }
+
+  // Always set/refresh cookie with SameSite=None; Secure=true
+  // so any existing or legacy Lax cookies are overwritten.
+  res.cookie('gsc_session', sessionId, COOKIE_OPTIONS);
 
   return sessionId;
 }
@@ -288,7 +288,7 @@ async function handleCallback(req, res, next) {
       throw dbErr;
     }
 
-    // Refresh session cookie on callback with full TTL and Partitioned attribute
+    // Refresh session cookie on callback with full TTL and SameSite=None; Secure=true
     res.cookie('gsc_session', sessionId, COOKIE_OPTIONS);
 
     return res.redirect(
