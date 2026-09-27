@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const seoRoutes = require('./routes/seoRoutes');
 const googleRoutes = require('./routes/googleRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
+const { connectDB } = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -73,9 +74,21 @@ module.exports = app;
 
 // Local development server
 if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(
-      `[SEO++ Server] Backend running smoothly on http://localhost:${PORT}`
-    );
+  connectDB()
+    .then(() => {
+      app.listen(PORT, () => {
+        console.log(
+          `[SEO++ Server] Backend running smoothly on http://localhost:${PORT}`
+        );
+      });
+    })
+    .catch((err) => {
+      console.error('[SEO++ Server] Startup aborted — DB connection failed:', err.message);
+      process.exit(1);
+    });
+} else {
+  // Vercel: connect on cold start; subsequent invocations reuse the connection
+  connectDB().catch((err) => {
+    console.error('[SEO++ Server] Vercel cold-start DB connection failed:', err.message);
   });
 }

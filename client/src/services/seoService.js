@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+const API_BASE = (import.meta.env.VITE_API_URL || '/api').trim().replace(/\/+$/, '');
 
 /**
  * Normalizes input URL string on the client before submission

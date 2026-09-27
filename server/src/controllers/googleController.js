@@ -17,10 +17,7 @@ const {
   getSearchPerformance,
 } = require('../services/googleAuthService');
 
-// Temporary in-memory token store.
-// NOTE: This is still used for the connected session.
-// Persistent storage should be used for long-term production sessions.
-const tokenStore = new Map();
+const GoogleOAuthSession = require('../models/GoogleOAuthSession');
 
 // ── Configuration ────────────────────────────────────────────────────────────
 
@@ -126,6 +123,21 @@ function verifyOAuthState(state) {
   }
 }
 
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  sameSite: 'none',
+  secure: true,
+  partitioned: true,
+  maxAge: 30 * 24 * 60 * 60 * 1000,
+};
+
+const CLEAR_COOKIE_OPTIONS = {
+  httpOnly: true,
+  sameSite: 'none',
+  secure: true,
+  partitioned: true,
+};
+
 // ── Session Helper ────────────────────────────────────────────────────────────
 
 function getSession(req, res) {
@@ -134,12 +146,7 @@ function getSession(req, res) {
   if (!sessionId) {
     sessionId = crypto.randomUUID();
 
-    res.cookie('gsc_session', sessionId, {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie('gsc_session', sessionId, COOKIE_OPTIONS);
   }
 
   return sessionId;
@@ -220,18 +227,33 @@ async function handleCallback(req, res, next) {
     }
 
     // Exchange authorization code for Google tokens.
-    const tokens = await exchangeCodeForTokens(code);
+    const newTokens = await exchangeCodeForTokens(code);
 
-    // Preserve any existing session information.
-    const existingSession =
-      tokenStore.get(sessionId) || {};
+    // Preserve existing session data (selectedSite + existing refresh_token
+    // if Google did not issue a new one).
+    const existing = await GoogleOAuthSession.findOne({ sessionId }).lean();
 
-    tokenStore.set(sessionId, {
-      ...existingSession,
-      tokens,
-      selectedSite:
-        existingSession.selectedSite || null,
-    });
+    const mergedTokens = {
+      ...(existing?.tokens || {}),
+      ...newTokens,
+      // Keep existing refresh_token when Google omits it in the response
+      refresh_token:
+        newTokens.refresh_token ||
+        existing?.tokens?.refresh_token ||
+        null,
+    };
+
+    await GoogleOAuthSession.findOneAndUpdate(
+      { sessionId },
+      {
+        tokens: mergedTokens,
+        selectedSite: existing?.selectedSite || null,
+      },
+      { upsert: true, new: true }
+    );
+
+    // Refresh session cookie on callback with full TTL and Partitioned attribute
+    res.cookie('gsc_session', sessionId, COOKIE_OPTIONS);
 
     return res.redirect(
       `${GSC_PATH}?connected=true`
@@ -253,24 +275,26 @@ async function handleCallback(req, res, next) {
  *
  * Returns connection status for the current session.
  */
-function getStatus(req, res) {
-  const sessionId =
-    req.cookies?.gsc_session;
+async function getStatus(req, res) {
+  try {
+    const sessionId = req.cookies?.gsc_session;
 
-  const sessionData =
-    sessionId
-      ? tokenStore.get(sessionId)
+    const sessionData = sessionId
+      ? await GoogleOAuthSession.findOne({ sessionId }).lean()
       : null;
 
-  const connected =
-    !!(sessionData?.tokens?.access_token);
+    const connected = !!(sessionData?.tokens?.access_token);
 
-  res.json({
-    success: true,
-    connected,
-    selectedSite:
-      sessionData?.selectedSite || null,
-  });
+    res.json({
+      success: true,
+      connected,
+      selectedSite: sessionData?.selectedSite || null,
+    });
+  } catch (err) {
+    // Never crash the status check — return disconnected gracefully
+    console.error('[GSC Status Error]:', err.message);
+    res.json({ success: true, connected: false, selectedSite: null });
+  }
 }
 
 /**
@@ -280,19 +304,16 @@ function getStatus(req, res) {
  */
 async function getProperties(req, res, next) {
   try {
-    const sessionId =
-      req.cookies?.gsc_session;
+    const sessionId = req.cookies?.gsc_session;
 
-    const sessionData =
-      sessionId
-        ? tokenStore.get(sessionId)
-        : null;
+    const sessionData = sessionId
+      ? await GoogleOAuthSession.findOne({ sessionId }).lean()
+      : null;
 
     if (!sessionData?.tokens) {
       return res.status(401).json({
         success: false,
-        error:
-          'Not connected to Google. Please authorize first.',
+        error: 'Not connected to Google. Please authorize first.',
       });
     }
 
@@ -351,39 +372,32 @@ async function getProperties(req, res, next) {
  */
 async function selectProperty(req, res, next) {
   try {
-    const sessionId =
-      req.cookies?.gsc_session;
+    const sessionId = req.cookies?.gsc_session;
 
-    const sessionData =
-      sessionId
-        ? tokenStore.get(sessionId)
-        : null;
+    const sessionData = sessionId
+      ? await GoogleOAuthSession.findOne({ sessionId }).lean()
+      : null;
 
     if (!sessionData?.tokens) {
       return res.status(401).json({
         success: false,
-        error:
-          'Not connected to Google.',
+        error: 'Not connected to Google.',
       });
     }
 
     const { siteUrl } = req.body;
 
-    if (
-      !siteUrl ||
-      typeof siteUrl !== 'string'
-    ) {
+    if (!siteUrl || typeof siteUrl !== 'string') {
       return res.status(400).json({
         success: false,
-        error:
-          'siteUrl is required.',
+        error: 'siteUrl is required.',
       });
     }
 
-    tokenStore.set(sessionId, {
-      ...sessionData,
-      selectedSite: siteUrl,
-    });
+    await GoogleOAuthSession.findOneAndUpdate(
+      { sessionId },
+      { selectedSite: siteUrl }
+    );
 
     res.json({
       success: true,
@@ -399,19 +413,16 @@ async function selectProperty(req, res, next) {
  */
 async function searchPerformance(req, res, next) {
   try {
-    const sessionId =
-      req.cookies?.gsc_session;
+    const sessionId = req.cookies?.gsc_session;
 
-    const sessionData =
-      sessionId
-        ? tokenStore.get(sessionId)
-        : null;
+    const sessionData = sessionId
+      ? await GoogleOAuthSession.findOne({ sessionId }).lean()
+      : null;
 
     if (!sessionData?.tokens) {
       return res.status(401).json({
         success: false,
-        error:
-          'Not connected to Google.',
+        error: 'Not connected to Google.',
       });
     }
 
@@ -516,19 +527,23 @@ async function searchPerformance(req, res, next) {
 /**
  * POST /api/google/disconnect
  */
-function disconnect(req, res) {
-  const sessionId =
-    req.cookies?.gsc_session;
+async function disconnect(req, res) {
+  try {
+    const sessionId = req.cookies?.gsc_session;
 
-  if (sessionId) {
-    tokenStore.delete(sessionId);
+    if (sessionId) {
+      await GoogleOAuthSession.deleteOne({ sessionId });
+    }
+
+    res.clearCookie('gsc_session', CLEAR_COOKIE_OPTIONS);
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[GSC Disconnect Error]:', err.message);
+    // Still clear the cookie even if DB delete fails
+    res.clearCookie('gsc_session', CLEAR_COOKIE_OPTIONS);
+    res.json({ success: true });
   }
-
-  res.clearCookie('gsc_session');
-
-  res.json({
-    success: true,
-  });
 }
 
 module.exports = {

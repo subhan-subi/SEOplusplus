@@ -10,7 +10,8 @@ import axios from 'axios';
 //
 // Local:
 // http://localhost:5001/api
-const API_BASE = `${import.meta.env.VITE_API_URL || '/api'}/google`;
+const rawApiUrl = (import.meta.env.VITE_API_URL || '/api').trim().replace(/\/+$/, '');
+const API_BASE = `${rawApiUrl}/google`;
 
 // Axios instance with credentials (needed for session cookie)
 const gscApi = axios.create({
@@ -45,7 +46,7 @@ export async function getGscStatus() {
  * The backend handles the actual Google redirect.
  */
 export function startGoogleAuth() {
-  window.location.href = `${import.meta.env.VITE_API_URL || '/api'}/google/auth`;
+  window.location.href = `${rawApiUrl}/google/auth`;
 }
 
 /**
