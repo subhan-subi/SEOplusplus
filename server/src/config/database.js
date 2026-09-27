@@ -22,7 +22,9 @@ async function connectDB() {
 
   try {
     await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 15000,
+      connectTimeoutMS: 15000,
+      socketTimeoutMS: 30000,
     });
 
     const { host } = mongoose.connection;

@@ -9,7 +9,8 @@ import {
   AlignLeft, 
   Link as LinkIcon, 
   ArrowRight,
-  ListFilter
+  ListFilter,
+  BarChart2
 } from 'lucide-react';
 import { TOOLS_LIST, TOOL_CATEGORIES } from '../../data/toolsRegistry';
 
@@ -20,7 +21,8 @@ const ICON_MAP = {
   Sparkles,
   Lightbulb,
   AlignLeft,
-  Link: LinkIcon
+  Link: LinkIcon,
+  BarChart2
 };
 
 export default function ToolsDirectory() {

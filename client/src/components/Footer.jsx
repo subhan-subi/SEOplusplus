@@ -25,6 +25,7 @@ export default function Footer() {
             <div className="footer-nav-label">SEO Tools</div>
             <nav className="footer-nav-col d-flex flex-column gap-2" aria-label="SEO Tools navigation">
               <Link to="/" className="footer-link">SEO Checker</Link>
+              <Link to="/tools/search-console" className="footer-link">Search Console</Link>
               <Link to="/tools" className="footer-link">All Tools Directory</Link>
             </nav>
           </div>
