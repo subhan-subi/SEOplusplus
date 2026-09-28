@@ -14,6 +14,37 @@ const analyzeLimiter = rateLimit({
   }
 });
 
+// Limit publishing inquiries to prevent spam
+const inquiryLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      error: 'You have submitted several inquiries recently. Please wait before submitting another.'
+    });
+  }
+});
+
+// Admin key verification limiter
+const adminLoginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      error: 'Too many authentication attempts. Please try again in 15 minutes.'
+    });
+  }
+});
+
 module.exports = {
-  analyzeLimiter
+  analyzeLimiter,
+  inquiryLimiter,
+  adminLoginLimiter
 };
+

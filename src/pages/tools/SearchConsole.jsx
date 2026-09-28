@@ -14,6 +14,7 @@ import {
   RefreshCw,
   ExternalLink,
   ChevronRight,
+  ChevronDown,
   Layers,
 } from 'lucide-react';
 import {
@@ -97,6 +98,74 @@ function DataTable({ title, icon: Icon, rows, keyLabel, cols }) {
   );
 }
 
+/* ── FAQ items ───────────────────────────────────────────────────────────── */
+const FAQ_ITEMS = [
+  {
+    id: 'add-property',
+    question: 'How do I add my website to Google Search Console?',
+    answer: (
+      <>
+        Open Google Search Console, add your website as a property, and complete Google's ownership verification process. Once your property is verified and accessible from the Google account you connect to SEO++, return here and connect your account.{' '}
+        <a
+          href="https://search.google.com/search-console"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="gsc-faq-link"
+        >
+          Open Google Search Console <ExternalLink size={13} className="ms-1" />
+        </a>
+      </>
+    ),
+  },
+  {
+    id: 'missing-property',
+    question: "Why can't I see my website property?",
+    answer: "SEO++ can only show Search Console properties that the Google account you connected has access to. Make sure you are using the correct Google account and that the website has been added and verified in Google Search Console. You can also use Refresh after making changes.",
+  },
+  {
+    id: 'connect-gsc',
+    question: 'How do I connect Google Search Console to SEO++?',
+    answer: 'Click Sign in with Google, choose the Google account that has access to your Search Console property, review the requested read-only permission, and allow access. SEO++ will then load the properties available to that account.',
+  },
+  {
+    id: 'data-access',
+    question: 'What data does SEO++ access?',
+    answer: 'SEO++ requests read-only Search Console access to retrieve your available properties and search performance metrics such as clicks, impressions, click-through rate, and average position. SEO++ does not request permission to modify your Search Console properties.',
+  },
+  {
+    id: 'change-settings',
+    question: 'Can SEO++ change my Search Console website or settings?',
+    answer: 'No. SEO++ uses read-only Search Console access. It does not make changes, submissions, or deletions to your Search Console properties or sitemaps.',
+  },
+  {
+    id: 'zero-data',
+    question: 'Why does my Search Console dashboard show zero data?',
+    answer: 'Search Console data may be unavailable when a property is new, has little or no search traffic, or Google has not accumulated enough data for the selected period. SEO++ currently displays the data returned by Google Search Console.',
+  },
+  {
+    id: 'switch-website',
+    question: 'How can I switch to another website?',
+    answer: 'Use the Switch button in the dashboard to return to your available Search Console properties and select another property.',
+  },
+  {
+    id: 'disconnect-gsc',
+    question: 'How can I disconnect Google Search Console?',
+    answer: (
+      <>
+        Click Disconnect on the Search Console dashboard. SEO++ will clear the active Search Console session from its backend. You can also review or revoke the application's Google account permission from your Google Account settings.{' '}
+        <a
+          href="https://myaccount.google.com/connections"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="gsc-faq-link"
+        >
+          Google Account Settings <ExternalLink size={13} className="ms-1" />
+        </a>
+      </>
+    ),
+  },
+];
+
 /* ── Main Page ────────────────────────────────────────────────────────────── */
 
 export default function SearchConsolePage() {
@@ -118,6 +187,8 @@ export default function SearchConsolePage() {
 
   const [disconnecting, setDisconnecting] = useState(false);
   const [pageError, setPageError] = useState(null);
+
+  const [openFaq, setOpenFaq] = useState(null);
 
   /* ── Load status on mount / after OAuth callback ─── */
   const loadStatus = useCallback(async () => {
@@ -511,6 +582,46 @@ export default function SearchConsolePage() {
             )}
           </div>
         )}
+
+        {/* ── FAQ Section ── */}
+        <section className="gsc-faq" aria-labelledby="gsc-faq-title">
+          <div className="gsc-faq-header">
+            <h2 id="gsc-faq-title" className="gsc-faq-title">
+              How to Use Google Search Console with SEO++
+            </h2>
+            <p className="gsc-faq-subtitle">
+              New to Search Console? Find quick answers to the most common setup and usage questions.
+            </p>
+          </div>
+
+          <div className="gsc-faq-list">
+            {FAQ_ITEMS.map((item, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div
+                  key={item.id}
+                  className={`gsc-faq-item${isOpen ? ' open' : ''}`}
+                >
+                  <button
+                    type="button"
+                    className="gsc-faq-question"
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    aria-expanded={isOpen}
+                    aria-controls={`gsc-faq-ans-${item.id}`}
+                  >
+                    <span>{item.question}</span>
+                    <ChevronDown size={18} className="gsc-faq-icon" aria-hidden="true" />
+                  </button>
+                  {isOpen && (
+                    <div id={`gsc-faq-ans-${item.id}`} className="gsc-faq-answer">
+                      {item.answer}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
       </div>
     </div>
   );

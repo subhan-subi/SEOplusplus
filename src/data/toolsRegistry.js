@@ -19,6 +19,16 @@ export const TOOLS_LIST = [
     longDescription: 'Comprehensive live crawling and 24-point audit of technical headers, canonicals, mobile viewport, metadata, and performance.'
   },
   {
+    id: 'search-console',
+    name: 'Google Search Console',
+    path: '/tools/search-console',
+    category: TOOL_CATEGORIES.SEO,
+    badge: 'Integration',
+    description: 'Connect your verified Google Search Console property.',
+    icon: 'BarChart2',
+    longDescription: 'Direct Google OAuth connection to view total clicks, impressions, average CTR, average keyword position, and top landing pages.'
+  },
+  {
     id: 'hashtag-generator',
     name: 'Hashtag Generator',
     path: '/tools/hashtags',

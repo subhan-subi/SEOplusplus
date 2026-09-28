@@ -14,7 +14,8 @@ import {
   AlignLeft, 
   Link as LinkIcon,
   Wrench,
-  BarChart2
+  BarChart2,
+  BookOpen
 } from 'lucide-react';
 import { BRAND } from '../config/brand';
 import { useTheme } from '../context/ThemeContext';
@@ -46,6 +47,7 @@ export default function Navbar() {
   const isSeoActive = location.pathname === '/' || location.pathname === '/analyze';
   const isSocialActive = location.pathname.startsWith('/tools/') && location.pathname !== '/tools/utm-builder' && location.pathname !== '/tools/search-console';
   const isMarketingActive = location.pathname === '/tools/utm-builder';
+  const isBlogActive = location.pathname.startsWith('/blog') || location.pathname === '/write-for-us';
   const isToolsActive = location.pathname === '/tools';
   const isAboutActive = location.pathname === '/about';
   const isGscActive = location.pathname === '/tools/search-console';
@@ -142,6 +144,15 @@ export default function Navbar() {
                 Marketing Tools
               </Link>
 
+              {/* SEO++ Blog */}
+              <Link
+                to="/blog"
+                className={`nav-link-item${isBlogActive ? ' active' : ''}`}
+                aria-current={isBlogActive ? 'page' : undefined}
+              >
+                Blog
+              </Link>
+
               {/* All Tools Directory */}
               <Link
                 to="/tools"
@@ -225,6 +236,11 @@ export default function Navbar() {
                 <span>SEO Checker</span>
               </Link>
 
+              <Link to="/blog" className={`mobile-nav-link ${isBlogActive ? 'active' : ''}`}>
+                <BookOpen size={16} />
+                <span>SEO++ Blog</span>
+              </Link>
+
               <div className="mobile-nav-group-title">Social Media Tools</div>
               <Link to="/tools/hashtags" className="mobile-nav-sublink">
                 <Hash size={15} />
@@ -261,6 +277,9 @@ export default function Navbar() {
                 <Link to="/tools/search-console" className={`mobile-nav-link ${isGscActive ? 'active' : ''}`}>
                   <BarChart2 size={16} />
                   <span>Search Console</span>
+                </Link>
+                <Link to="/write-for-us" className="mobile-nav-link">
+                  <span>Write for Us</span>
                 </Link>
                 <Link to="/about" className={`mobile-nav-link ${isAboutActive ? 'active' : ''}`}>
                   <span>About {BRAND.name}</span>

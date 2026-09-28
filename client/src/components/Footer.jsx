@@ -53,11 +53,14 @@ export default function Footer() {
               </div>
 
               <div className="col-6 col-lg-12">
-                <div className="footer-nav-label">Company</div>
+                <div className="footer-nav-label">Company &amp; Blog</div>
                 <nav className="footer-nav-col d-flex flex-column gap-2" aria-label="Company navigation">
+                  <Link to="/blog" className="footer-link">SEO++ Blog</Link>
+                  <Link to="/write-for-us" className="footer-link">Write for Us</Link>
                   <Link to="/about" className="footer-link">About</Link>
                   <Link to="/privacy" className="footer-link">Privacy Policy</Link>
                   <Link to="/terms" className="footer-link">Terms of Service</Link>
+                  <Link to="/blog/manage" className="footer-link text-muted" style={{ fontSize: '0.75rem' }}>Editorial Portal</Link>
                 </nav>
               </div>
             </div>

@@ -2,9 +2,16 @@
  * Google Search Console frontend service.
  * All requests go through the backend — secrets NEVER touch this file.
  */
+
 import axios from 'axios';
 
-const API_BASE = '/api/google';
+// Production:
+// https://seoplusplus-backend.vercel.app/api
+//
+// Local:
+// http://localhost:5001/api
+const rawApiUrl = (import.meta.env.VITE_API_URL || '/api').trim().replace(/\/+$/, '');
+const API_BASE = `${rawApiUrl}/google`;
 
 // Axios instance with credentials (needed for session cookie)
 const gscApi = axios.create({
@@ -39,7 +46,7 @@ export async function getGscStatus() {
  * The backend handles the actual Google redirect.
  */
 export function startGoogleAuth() {
-  window.location.href = '/api/google/auth';
+  window.location.href = `${rawApiUrl}/google/auth`;
 }
 
 /**
@@ -49,10 +56,16 @@ export function startGoogleAuth() {
 export async function fetchGscProperties() {
   try {
     const res = await gscApi.get('/properties');
-    if (!res.data.success) throw new Error(res.data.error || 'Failed to fetch properties.');
+
+    if (!res.data.success) {
+      throw new Error(res.data.error || 'Failed to fetch properties.');
+    }
+
     return res.data.properties;
   } catch (err) {
-    throw new Error(extractError(err, 'Failed to fetch Search Console properties.'));
+    throw new Error(
+      extractError(err, 'Failed to fetch Search Console properties.')
+    );
   }
 }
 
@@ -63,10 +76,16 @@ export async function fetchGscProperties() {
 export async function selectGscProperty(siteUrl) {
   try {
     const res = await gscApi.post('/select-property', { siteUrl });
-    if (!res.data.success) throw new Error(res.data.error || 'Failed to select property.');
+
+    if (!res.data.success) {
+      throw new Error(res.data.error || 'Failed to select property.');
+    }
+
     return res.data;
   } catch (err) {
-    throw new Error(extractError(err, 'Failed to select property.'));
+    throw new Error(
+      extractError(err, 'Failed to select property.')
+    );
   }
 }
 
@@ -76,11 +95,24 @@ export async function selectGscProperty(siteUrl) {
  */
 export async function fetchSearchPerformance(days = 28) {
   try {
-    const res = await gscApi.get('/search-performance', { params: { days } });
-    if (!res.data.success) throw new Error(res.data.error || 'Failed to fetch performance data.');
+    const res = await gscApi.get('/search-performance', {
+      params: { days },
+    });
+
+    if (!res.data.success) {
+      throw new Error(
+        res.data.error || 'Failed to fetch performance data.'
+      );
+    }
+
     return res.data;
   } catch (err) {
-    throw new Error(extractError(err, 'Failed to fetch Search Console performance data.'));
+    throw new Error(
+      extractError(
+        err,
+        'Failed to fetch Search Console performance data.'
+      )
+    );
   }
 }
 
@@ -94,4 +126,3 @@ export async function disconnectGsc() {
     // Ignore disconnect errors
   }
 }
-

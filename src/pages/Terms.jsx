@@ -61,33 +61,47 @@ export default function Terms() {
           </p>
         </div>
 
-        {/* 5. UTM Builder & Client-Side Execution */}
+        {/* 5. Google Search Console Integration Terms */}
         <div className="mb-4">
-          <h2 className="h5 fw-bold text-main mb-2">5. UTM Builder and Client-Side Execution</h2>
+          <h2 className="h5 fw-bold text-main mb-2">5. Google Search Console Integration Terms</h2>
+          <p className="text-secondary small mb-2">
+            When using the optional Google Search Console connection:
+          </p>
+          <ul className="text-secondary small mb-0 ps-3">
+            <li><strong>Authorization &amp; Ownership:</strong> You confirm and represent that you are the verified owner of, or have explicit authorized permission to access, any Google Search Console properties you connect and review through {BRAND.name}.</li>
+            <li><strong>Read-Only Querying:</strong> {BRAND.name} requests strictly read-only access (<code>webmasters.readonly</code>) to retrieve search analytics and property listings for your display. {BRAND.name} does not make changes, submissions, or deletions to your Search Console properties or sitemaps.</li>
+            <li><strong>Third-Party Disclaimer:</strong> {BRAND.name} is an independent utility and is not affiliated with, sponsored by, or endorsed by Google LLC. Google and Google Search Console are trademarks of Google LLC. Service uptime and data delivery depend on the availability and quotas of Google APIs.</li>
+            <li><strong>Disconnecting &amp; Revocation:</strong> You may disconnect the integration at any time from within the tool interface or revoke permissions directly in your Google Account security settings.</li>
+          </ul>
+        </div>
+
+        {/* 6. UTM Builder & Client-Side Execution */}
+        <div className="mb-4">
+          <h2 className="h5 fw-bold text-main mb-2">6. UTM Builder and Client-Side Execution</h2>
           <p className="text-secondary small mb-0">
             Our UTM builder functions exclusively in your web browser. You are responsible for testing and validating tracking links before deploying them in live advertising or email marketing campaigns.
           </p>
         </div>
 
-        {/* 6. Service Availability & Changes */}
+        {/* 7. Service Availability & Changes */}
         <div className="mb-4">
-          <h2 className="h5 fw-bold text-main mb-2">6. Service Availability and Changes</h2>
+          <h2 className="h5 fw-bold text-main mb-2">7. Service Availability and Changes</h2>
           <p className="text-secondary small mb-0">
             {BRAND.name} is provided on a free, "as-is" and "as-available" basis without warranties of any kind. We reserve the right to modify tools, refine templates, or adjust scoring algorithms at any time without notice.
           </p>
         </div>
 
-        {/* 7. Limitation of Liability */}
+        {/* 8. Limitation of Liability */}
         <div className="mb-4">
-          <h2 className="h5 fw-bold text-main mb-2">7. Limitation of Liability</h2>
+          <h2 className="h5 fw-bold text-main mb-2">8. Limitation of Liability</h2>
           <p className="text-secondary small mb-0">
             To the maximum extent permitted by law, {BRAND.name} and its contributors shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use our tools, reports, or generated copy.
           </p>
         </div>
 
-        {/* 8. Contact Information */}
+        {/* 9. Contact Information */}
         <div className="mb-0">
-          <h2 className="h5 fw-bold text-main mb-2">8. Contact Information</h2>
+          <h2 className="h5 fw-bold text-main mb-2">9. Contact Information</h2>
           <p className="text-secondary small mb-0">
             For questions regarding these Terms of Service, please reach out through our official community channels and open-source project repository.
           </p>

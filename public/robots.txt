@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /blog/manage
 
-Sitemap: https://seoly.example.com/sitemap.xml
+Sitemap: https://seoplusplus.vercel.app/sitemap.xml

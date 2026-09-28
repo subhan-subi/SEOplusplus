@@ -1,6 +1,15 @@
 'use strict';
 
+const dns = require('dns');
 const mongoose = require('mongoose');
+
+// Configure reliable public DNS servers (Google DNS) for Node.js SRV resolution
+// Resolves querySrv ECONNREFUSED on local Windows environments when connecting to MongoDB Atlas mongodb+srv://
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4']);
+} catch (dnsErr) {
+  console.warn('[DB] Custom DNS resolver setup warning:', dnsErr.message);
+}
 
 /**
  * Connects to MongoDB Atlas using the MONGODB_URI environment variable.
@@ -21,6 +30,12 @@ async function connectDB() {
   }
 
   try {
+    try {
+      dns.setServers(['8.8.8.8', '8.8.4.4']);
+    } catch {
+      // Continue if environment restricts DNS mutation
+    }
+
     await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 15000,
       connectTimeoutMS: 15000,

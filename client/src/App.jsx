@@ -8,9 +8,16 @@ import Footer from './components/Footer';
 // Pages
 import Home from './pages/Home';
 import Analyze from './pages/Analyze';
+// Company Pages
 import About from './pages/About';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
+import WriteForUs from './pages/WriteForUs';
+
+// Blog & Content Publishing Pages
+import BlogList from './pages/blog/BlogList';
+import ArticleDetail from './pages/blog/ArticleDetail';
+import BlogAdmin from './pages/blog/BlogAdmin';
 
 // Tool Pages
 import ToolsDirectory from './pages/tools/ToolsDirectory';
@@ -34,6 +41,14 @@ export default function App() {
                 {/* SEO Checker Routes */}
                 <Route path="/" element={<Home />} />
                 <Route path="/analyze" element={<Analyze />} />
+
+                {/* SEO++ Blog & Knowledge Platform */}
+                <Route path="/blog" element={<BlogList />} />
+                <Route path="/blog/:slug" element={<ArticleDetail />} />
+                <Route path="/blog/manage" element={<BlogAdmin />} />
+
+                {/* Write for Us / Editorial Inquiries */}
+                <Route path="/write-for-us" element={<WriteForUs />} />
 
                 {/* Toolkit Directory & Tools */}
                 <Route path="/tools" element={<ToolsDirectory />} />

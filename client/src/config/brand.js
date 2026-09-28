@@ -104,9 +104,38 @@ export const BRAND = {
         },
       ],
     },
+
+    {
+      label: 'Blog & Insights',
+      path: '/blog',
+      items: [
+        {
+          label: 'SEO++ Blog',
+          path: '/blog',
+          description:
+            'In-depth guides on SEO, search analytics, and growth.',
+        },
+        {
+          label: 'Write for Us',
+          path: '/write-for-us',
+          description:
+            'Publish guest and sponsored content with SEO++.',
+        },
+      ],
+    },
   ],
 
   companyLinks: [
+    {
+      label: 'SEO++ Blog',
+      path: '/blog',
+    },
+
+    {
+      label: 'Write for Us',
+      path: '/write-for-us',
+    },
+
     {
       label: 'All Tools',
       path: '/tools',

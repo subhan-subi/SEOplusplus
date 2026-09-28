@@ -6,6 +6,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const seoRoutes = require('./routes/seoRoutes');
 const googleRoutes = require('./routes/googleRoutes');
+const blogRoutes = require('./routes/blogRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
 const { connectDB } = require('./config/database');
 
@@ -35,8 +36,8 @@ app.use(cors({
 
     return callback(new Error('Not allowed by CORS'));
   },
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Accept'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'x-admin-key'],
   credentials: true,
 }));
 
@@ -48,8 +49,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// JSON body parser with strict limit
-app.use(express.json({ limit: '32kb' }));
+// JSON body parser with limit supporting article content
+app.use(express.json({ limit: '2mb' }));
 
 // Cookie parser (needed for GSC session cookie)
 app.use(cookieParser());
@@ -69,6 +70,30 @@ app.use('/api/google', async (req, res, next) => {
 });
 
 app.use('/api/google', googleRoutes);
+
+// Ensure DB connection is active before processing Blog routes
+app.use('/api/blog', async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('[DB] Failed to connect for /api/blog request:', err.message);
+    next(err);
+  }
+});
+
+app.use('/api/blog', blogRoutes);
+
+// Dynamic sitemap endpoint at /sitemap.xml
+app.get('/sitemap.xml', async (req, res, next) => {
+  try {
+    await connectDB();
+    const { getSitemapXml } = require('./controllers/blogController');
+    return getSitemapXml(req, res, next);
+  } catch (err) {
+    next(err);
+  }
+});
 
 // 404 for unknown endpoints
 app.use((req, res) => {
