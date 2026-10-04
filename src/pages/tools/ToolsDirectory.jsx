@@ -10,7 +10,9 @@ import {
   Link as LinkIcon, 
   ArrowRight,
   ListFilter,
-  BarChart2
+  BarChart2,
+  TrendingUp,
+  Key
 } from 'lucide-react';
 import { TOOLS_LIST, TOOL_CATEGORIES } from '../../data/toolsRegistry';
 
@@ -22,7 +24,9 @@ const ICON_MAP = {
   Lightbulb,
   AlignLeft,
   Link: LinkIcon,
-  BarChart2
+  BarChart2,
+  TrendingUp,
+  Key
 };
 
 export default function ToolsDirectory() {

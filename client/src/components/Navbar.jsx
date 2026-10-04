@@ -15,7 +15,9 @@ import {
   Link as LinkIcon,
   Wrench,
   BarChart2,
-  BookOpen
+  BookOpen,
+  TrendingUp,
+  Key
 } from 'lucide-react';
 import { BRAND } from '../config/brand';
 import { useTheme } from '../context/ThemeContext';
@@ -45,7 +47,9 @@ export default function Navbar() {
   }, [location.pathname]);
 
   const isSeoActive = location.pathname === '/' || location.pathname === '/analyze';
-  const isSocialActive = location.pathname.startsWith('/tools/') && location.pathname !== '/tools/utm-builder' && location.pathname !== '/tools/search-console';
+  const isDrActive = location.pathname === '/tools/dr-checker';
+  const isKeywordActive = location.pathname === '/tools/keyword-finder';
+  const isSocialActive = location.pathname.startsWith('/tools/') && location.pathname !== '/tools/utm-builder' && location.pathname !== '/tools/search-console' && location.pathname !== '/tools/dr-checker' && location.pathname !== '/tools/keyword-finder';
   const isMarketingActive = location.pathname === '/tools/utm-builder';
   const isBlogActive = location.pathname.startsWith('/blog') || location.pathname === '/write-for-us';
   const isToolsActive = location.pathname === '/tools';
@@ -75,6 +79,24 @@ export default function Navbar() {
                 aria-current={isSeoActive ? 'page' : undefined}
               >
                 SEO Tools
+              </Link>
+
+              {/* DR Checker */}
+              <Link
+                to="/tools/dr-checker"
+                className={`nav-link-item${isDrActive ? ' active' : ''}`}
+                aria-current={isDrActive ? 'page' : undefined}
+              >
+                DR Checker
+              </Link>
+
+              {/* Keyword Finder */}
+              <Link
+                to="/tools/keyword-finder"
+                className={`nav-link-item${isKeywordActive ? ' active' : ''}`}
+                aria-current={isKeywordActive ? 'page' : undefined}
+              >
+                Keyword Finder
               </Link>
 
               {/* Social Media Dropdown */}
@@ -234,6 +256,16 @@ export default function Navbar() {
               <Link to="/" className={`mobile-nav-link ${isSeoActive ? 'active' : ''}`}>
                 <Search size={16} />
                 <span>SEO Checker</span>
+              </Link>
+
+              <Link to="/tools/dr-checker" className={`mobile-nav-link ${isDrActive ? 'active' : ''}`}>
+                <TrendingUp size={16} />
+                <span>DR Checker</span>
+              </Link>
+
+              <Link to="/tools/keyword-finder" className={`mobile-nav-link ${isKeywordActive ? 'active' : ''}`}>
+                <Key size={16} />
+                <span>Keyword Finder</span>
               </Link>
 
               <Link to="/blog" className={`mobile-nav-link ${isBlogActive ? 'active' : ''}`}>

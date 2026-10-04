@@ -29,6 +29,26 @@ export const TOOLS_LIST = [
     longDescription: 'Direct Google OAuth connection to view total clicks, impressions, average CTR, average keyword position, and top landing pages.'
   },
   {
+    id: 'dr-checker',
+    name: 'DR Checker',
+    path: '/tools/dr-checker',
+    category: TOOL_CATEGORIES.SEO,
+    badge: 'Authority Metric',
+    description: 'Check official Ahrefs Domain Rating (DR) for any website or domain.',
+    icon: 'TrendingUp',
+    longDescription: 'Query Ahrefs Site Explorer API to measure domain authority and backlink profile strength on a 0-100 scale.'
+  },
+  {
+    id: 'keyword-finder',
+    name: 'Keyword Finder',
+    path: '/tools/keyword-finder',
+    category: TOOL_CATEGORIES.SEO,
+    badge: 'Keyword Ideas',
+    description: 'Discover relevant related, long-tail, and question keyword ideas from any seed topic.',
+    icon: 'Key',
+    longDescription: 'Generate targeted keyword variations, search questions, comparisons, and commercial phrases organized by search intent.'
+  },
+  {
     id: 'hashtag-generator',
     name: 'Hashtag Generator',
     path: '/tools/hashtags',

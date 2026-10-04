@@ -28,6 +28,8 @@ import ContentIdeas from './pages/tools/ContentIdeas';
 import CharacterCounter from './pages/tools/CharacterCounter';
 import UtmBuilder from './pages/tools/UtmBuilder';
 import SearchConsole from './pages/tools/SearchConsole';
+import DrChecker from './pages/tools/DrChecker';
+import KeywordFinder from './pages/tools/KeywordFinder';
 
 export default function App() {
   return (
@@ -59,6 +61,8 @@ export default function App() {
                 <Route path="/tools/character-counter" element={<CharacterCounter />} />
                 <Route path="/tools/utm-builder" element={<UtmBuilder />} />
                 <Route path="/tools/search-console" element={<SearchConsole />} />
+                <Route path="/tools/dr-checker" element={<DrChecker />} />
+                <Route path="/tools/keyword-finder" element={<KeywordFinder />} />
 
                 {/* Company Pages */}
                 <Route path="/about" element={<About />} />
