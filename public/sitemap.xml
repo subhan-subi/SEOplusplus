@@ -17,17 +17,47 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://seoplusplus.vercel.app/tools/utm-builder</loc>
+    <loc>https://seoplusplus.vercel.app/tools/dr-checker</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://seoplusplus.vercel.app/tools/keyword-finder</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://seoplusplus.vercel.app/tools/hashtags</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://seoplusplus.vercel.app/tools/captions</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://seoplusplus.vercel.app/tools/hooks</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://seoplusplus.vercel.app/tools/content-ideas</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://seoplusplus.vercel.app/tools/character-counter</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://seoplusplus.vercel.app/tools/utm-builder</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 
-  <!-- SEO++ Blog & Knowledge Publication -->
+  <!-- SEO++ Blog & Knowledge Hub -->
   <url>
     <loc>https://seoplusplus.vercel.app/blog</loc>
     <changefreq>daily</changefreq>
@@ -39,7 +69,7 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Published Articles -->
+  <!-- Published High-Quality Guides -->
   <url>
     <loc>https://seoplusplus.vercel.app/blog/what-is-seo-beginners-guide</loc>
     <changefreq>weekly</changefreq>
@@ -71,20 +101,30 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Company Information -->
+  <!-- Company & Policy Pages -->
   <url>
     <loc>https://seoplusplus.vercel.app/about</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://seoplusplus.vercel.app/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://seoplusplus.vercel.app/privacy</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://seoplusplus.vercel.app/terms</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://seoplusplus.vercel.app/disclaimer</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>

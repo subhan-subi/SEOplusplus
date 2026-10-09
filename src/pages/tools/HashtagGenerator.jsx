@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Hash, Copy, Check, RotateCw, XCircle, Sparkles, Info } from 'lucide-react';
 import ToolHeader from '../../components/common/ToolHeader';
+import PageSeo from '../../components/common/PageSeo';
 import { generateHashtags, HASHTAG_CATEGORIES } from '../../data/hashtagData';
 import { useToast } from '../../context/ToastContext';
 
@@ -71,6 +72,11 @@ export default function HashtagGenerator() {
 
   return (
     <div className="container py-5" style={{ maxWidth: '920px' }}>
+      <PageSeo
+        title="Free Hashtag Generator for Instagram, TikTok & LinkedIn"
+        description="Generate tailored hashtags for Instagram, TikTok, LinkedIn, YouTube, and Facebook. Instant copy, client-side, free utility."
+        canonical="/tools/hashtags"
+      />
       <ToolHeader
         title="Hashtag Generator"
         description="Generate relevant hashtags from your topic or keywords."

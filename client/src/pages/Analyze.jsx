@@ -8,17 +8,18 @@ import CategoryScores from '../components/CategoryScores';
 import Recommendations from '../components/Recommendations';
 import IssuesSection from '../components/IssuesSection';
 import UrlAnalyzer from '../components/UrlAnalyzer';
-import { 
-  Globe, 
-  Clock, 
-  FileCode, 
-  Type, 
-  ExternalLink, 
-  RotateCw, 
+import {
+  Globe,
+  Clock,
+  FileCode,
+  Type,
+  ExternalLink,
+  RotateCw,
   AlertTriangle,
   CheckCircle2,
   Info
 } from 'lucide-react';
+import PageSeo from '../components/common/PageSeo';
 
 export default function Analyze() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -70,13 +71,18 @@ export default function Analyze() {
 
   return (
     <div className="analyze-page pb-5">
+      <PageSeo
+        title={auditData?.url ? `SEO Audit Report for ${auditData.normalizedUrl || auditData.url}` : "Website SEO Audit Report"}
+        description="Free website audit report analyzing meta tags, page speed, mobile performance, security, and structured data with actionable recommendations."
+        canonical="/analyze"
+      />
       {/* Search Bar on top of Analyze Page */}
       <section className="py-4 border-bottom" style={{ backgroundColor: 'var(--bg-glass)' }}>
         <div className="container">
-          <UrlAnalyzer 
-            initialUrl={urlParam || auditData?.url || ''} 
+          <UrlAnalyzer
+            initialUrl={urlParam || auditData?.url || ''}
             onAnalyze={performAudit}
-            isLoading={loading} 
+            isLoading={loading}
           />
         </div>
       </section>
@@ -98,7 +104,7 @@ export default function Analyze() {
               {error}
             </p>
             <div className="d-flex justify-content-center gap-2">
-              <button 
+              <button
                 className="btn btn-outline-secondary btn-sm"
                 onClick={handleReanalyze}
               >

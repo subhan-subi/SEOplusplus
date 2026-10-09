@@ -1,4 +1,3 @@
-
 /**
  * Centralized Brand Configuration
  * Keep branding, navigation, and reusable product messaging in one place.
@@ -7,21 +6,21 @@
 export const BRAND = {
   name: 'SEO++',
 
-  tagline: 'Free SEO, Content & Marketing Tools',
+  tagline: 'Free SEO, Search Console & Marketing Toolkit',
 
   heroHeadline: "Analyze your website's SEO health in seconds.",
 
   subheading:
-    'Find technical and on-page SEO issues, generate content ideas, and use practical marketing tools — all in one place.',
+    'Find technical and on-page SEO issues, inspect Google Search Console rankings, uncover keyword ideas, and use practical marketing tools — all in one place.',
 
   year: 2026,
 
-  author: 'SEO++ Team',
+  author: 'SEO++ Editorial Team',
 
   badge: 'Free SEO & Marketing Toolkit',
 
   freeFeatures: [
-    'Free to use',
+    '100% Free to use',
     'No login required',
     'No subscription required',
   ],
@@ -29,13 +28,13 @@ export const BRAND = {
   auditLabel: 'SEO Website Audit',
 
   disclaimer:
-    'SEO++ provides automated SEO analysis and rule-based marketing utilities. Results are informational and do not guarantee search engine rankings, social media reach, engagement, or conversions.',
+    'SEO++ provides automated SEO analysis, search performance insights, and rule-based marketing utilities. Results are informational and do not guarantee search engine rankings, indexing, or commercial conversions.',
 
   footerDisclaimer:
-    'SEO++ provides automated SEO analysis and practical marketing utilities. Results are informational and should be used as a starting point for further review.',
+    'SEO++ provides automated technical SEO analysis, keyword brainstorming, and practical marketing utilities. Audit results and metrics are educational and should be used as starting points for further technical review.',
 
   footerSubtitle:
-    'Free, practical tools for SEO, content creation, social media, and digital marketing.',
+    'Free, practical tools for SEO audits, search analytics, content creation, social media, and digital marketing.',
 
   navGroups: [
     {
@@ -47,6 +46,24 @@ export const BRAND = {
           path: '/',
           description:
             "Analyze a website's technical and on-page SEO signals.",
+        },
+        {
+          label: 'Search Console Tool',
+          path: '/tools/search-console',
+          description:
+            'Connect verified Search Console properties to inspect queries and rankings.',
+        },
+        {
+          label: 'Domain Rating (DR) Checker',
+          path: '/tools/dr-checker',
+          description:
+            'Check domain authority and backlink profile strength on a 0-100 scale.',
+        },
+        {
+          label: 'Keyword Finder',
+          path: '/tools/keyword-finder',
+          description:
+            'Discover relevant related queries, long-tail ideas, and search questions.',
         },
       ],
     },
@@ -61,28 +78,24 @@ export const BRAND = {
           description:
             'Generate relevant hashtag suggestions from topics and niches.',
         },
-
         {
           label: 'Caption Generator',
           path: '/tools/captions',
           description:
             'Create quick, template-based captions for social posts.',
         },
-
         {
           label: 'Hook Generator',
           path: '/tools/hooks',
           description:
             'Generate opening hooks using different content angles.',
         },
-
         {
           label: 'Content Ideas',
           path: '/tools/content-ideas',
           description:
             'Get practical content ideas across multiple formats and topics.',
         },
-
         {
           label: 'Character Counter',
           path: '/tools/character-counter',
@@ -101,6 +114,12 @@ export const BRAND = {
           path: '/tools/utm-builder',
           description:
             'Create campaign tracking URLs with UTM parameters.',
+        },
+        {
+          label: 'All Tools Directory',
+          path: '/tools',
+          description:
+            'Browse our full suite of 10 free search and marketing tools.',
         },
       ],
     },
@@ -130,30 +149,33 @@ export const BRAND = {
       label: 'SEO++ Blog',
       path: '/blog',
     },
-
     {
       label: 'Write for Us',
       path: '/write-for-us',
     },
-
     {
       label: 'All Tools',
       path: '/tools',
     },
-
     {
       label: 'About',
       path: '/about',
     },
-
+    {
+      label: 'Contact',
+      path: '/contact',
+    },
     {
       label: 'Privacy',
       path: '/privacy',
     },
-
     {
       label: 'Terms',
       path: '/terms',
+    },
+    {
+      label: 'Disclaimer',
+      path: '/disclaimer',
     },
   ],
 };

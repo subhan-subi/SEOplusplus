@@ -9,7 +9,6 @@ const googleRoutes = require('./routes/googleRoutes');
 const blogRoutes = require('./routes/blogRoutes');
 const drRoutes = require('./routes/drRoutes');
 const keywordRoutes = require('./routes/keywordRoutes');
-const googleAdsRoutes = require('./routes/googleAdsRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
 const { connectDB } = require('./config/database');
 
@@ -22,7 +21,6 @@ app.disable('x-powered-by');
 // Allow local + production frontend
 const allowedOrigins = [
   'http://localhost:5173',
-  'http://localhost:5174',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
@@ -63,7 +61,6 @@ app.use(cookieParser());
 app.use('/api', seoRoutes);
 app.use('/api/dr', drRoutes);
 app.use('/api/keywords', keywordRoutes);
-app.use('/api/google-ads', googleAdsRoutes);
 
 // Ensure DB connection is active before processing Google routes (critical for Vercel cold starts)
 app.use('/api/google', async (req, res, next) => {
@@ -118,24 +115,17 @@ module.exports = app;
 
 // Local development server
 if (!process.env.VERCEL) {
-  // Start the HTTP server immediately — DB is only required for Blog & Google/GSC routes.
-  // Those routes already call connectDB() per-request and fail gracefully if DB is unavailable.
-  app.listen(PORT, () => {
-    console.log(
-      `[SEO++ Server] Backend running smoothly on http://localhost:${PORT}`
-    );
-  });
-
-  // Attempt DB connection in the background; log a warning if it fails
   connectDB()
     .then(() => {
-      console.log('[SEO++ Server] Database ready — Blog & Google/GSC routes are now active.');
+      app.listen(PORT, () => {
+        console.log(
+          `[SEO++ Server] Backend running smoothly on http://localhost:${PORT}`
+        );
+      });
     })
     .catch((err) => {
-      console.warn(
-        '[SEO++ Server] DB connection failed — Blog & Google/GSC routes unavailable.',
-        err.message
-      );
+      console.error('[SEO++ Server] Startup aborted — DB connection failed:', err.message);
+      process.exit(1);
     });
 } else {
   // Vercel: connect on cold start; subsequent invocations reuse the connection

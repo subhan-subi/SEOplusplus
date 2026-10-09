@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, Copy, RotateCw, XCircle, Check, Info } from 'lucide-react';
 import ToolHeader from '../../components/common/ToolHeader';
+import PageSeo from '../../components/common/PageSeo';
 import { generateHooks, HOOK_CATEGORIES } from '../../data/hookTemplates';
 import { useToast } from '../../context/ToastContext';
 
@@ -77,6 +78,11 @@ export default function HookGenerator() {
 
   return (
     <div className="container py-5" style={{ maxWidth: '920px' }}>
+      <PageSeo
+        title="Free Content Hook Generator for TikTok, Instagram & LinkedIn"
+        description="Create high-impact opening lines and hooks for your social media content. Question, curiosity, problem, and story-based hooks instantly."
+        canonical="/tools/hooks"
+      />
       <ToolHeader
         title="Hook Generator"
         description="Create attention-grabbing opening lines for your content across 7 proven angles."

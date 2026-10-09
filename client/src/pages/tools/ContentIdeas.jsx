@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Lightbulb, Copy, RotateCw, XCircle, Check, Info } from 'lucide-react';
 import ToolHeader from '../../components/common/ToolHeader';
+import PageSeo from '../../components/common/PageSeo';
 import { generateContentIdeas, CONTENT_TYPES } from '../../data/contentIdeaTemplates';
 import { useToast } from '../../context/ToastContext';
 
@@ -78,6 +79,11 @@ export default function ContentIdeas() {
 
   return (
     <div className="container py-5" style={{ maxWidth: '920px' }}>
+      <PageSeo
+        title="Free Content Ideas Generator for Social Media & Blog"
+        description="Generate content ideas, post formats, and topic angles for Instagram, TikTok, LinkedIn, and YouTube. Free, instant, no account needed."
+        canonical="/tools/content-ideas"
+      />
       <ToolHeader
         title="Content Ideas Generator"
         description="Generate content ideas from your topic and platform across tutorials, checklists, and case studies."

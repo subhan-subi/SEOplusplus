@@ -12,14 +12,23 @@ import {
   MessageSquare, 
   AlignLeft, 
   Link as LinkIcon, 
-  ArrowRight 
+  ArrowRight,
+  TrendingUp,
+  Key
 } from 'lucide-react';
 import { BRAND } from '../config/brand';
 import UrlAnalyzer from '../components/UrlAnalyzer';
+import PageSeo from '../components/common/PageSeo';
 
 export default function Home() {
   return (
     <div className="home-page">
+      <PageSeo
+        title="Free Website SEO Health & Performance Audit Tool"
+        description="Analyze your website SEO health, meta tags, page speed, mobile performance, and backlink authority in seconds with actionable recommendations."
+        canonical="/"
+      />
+
       {/* Hero Section */}
       <section className="hero-section text-center" aria-label="Hero section">
         <div className="container">
@@ -140,22 +149,46 @@ export default function Home() {
         </div>
       </section>
 
-
+      {/* Free Tools Grid */}
       <section className="py-5 border-bottom">
         <div className="container py-2">
           <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
             <div>
-              <span className="badge-subtle-primary mb-2 d-inline-block">Free Marketing Toolkit</span>
-              <h2 className="h3 fw-bold mb-1 text-main">Social Media & Marketing Tools</h2>
-              <p className="text-secondary small mb-0">Simple, 100% client-side utilities without AI hype, accounts, or rate fees.</p>
+              <span className="badge-subtle-primary mb-2 d-inline-block">Free Toolkit</span>
+              <h2 className="h3 fw-bold mb-1 text-main">SEO & Digital Marketing Tools</h2>
+              <p className="text-secondary small mb-0">Practical client-side utilities without AI hype, accounts, or fees.</p>
             </div>
             <Link to="/tools" className="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1">
-              <span>View All 7 Tools</span>
+              <span>View All 10 Tools</span>
               <ArrowRight size={14} />
             </Link>
           </div>
 
           <div className="row g-3">
+            <div className="col-12 col-sm-6 col-lg-3">
+              <Link to="/tools/keyword-finder" className="text-decoration-none">
+                <div className="tool-directory-card p-3 rounded-4 border h-100">
+                  <div className="brand-icon mb-2" aria-hidden="true">
+                    <Key size={18} />
+                  </div>
+                  <h3 className="h6 fw-bold text-main mb-1">Keyword Finder</h3>
+                  <p className="text-muted small mb-0">Related phrases, questions, and long-tail ideas.</p>
+                </div>
+              </Link>
+            </div>
+
+            <div className="col-12 col-sm-6 col-lg-3">
+              <Link to="/tools/dr-checker" className="text-decoration-none">
+                <div className="tool-directory-card p-3 rounded-4 border h-100">
+                  <div className="brand-icon mb-2" aria-hidden="true">
+                    <TrendingUp size={18} />
+                  </div>
+                  <h3 className="h6 fw-bold text-main mb-1">Domain Rating</h3>
+                  <p className="text-muted small mb-0">Check Ahrefs Domain Rating authority metrics.</p>
+                </div>
+              </Link>
+            </div>
+
             <div className="col-12 col-sm-6 col-lg-3">
               <Link to="/tools/hashtags" className="text-decoration-none">
                 <div className="tool-directory-card p-3 rounded-4 border h-100">
@@ -181,6 +214,18 @@ export default function Home() {
             </div>
 
             <div className="col-12 col-sm-6 col-lg-3">
+              <Link to="/tools/hooks" className="text-decoration-none">
+                <div className="tool-directory-card p-3 rounded-4 border h-100">
+                  <div className="brand-icon mb-2" aria-hidden="true">
+                    <Sparkles size={18} />
+                  </div>
+                  <h3 className="h6 fw-bold text-main mb-1">Hook Generator</h3>
+                  <p className="text-muted small mb-0">Compelling opening lines for Reels, Shorts, and TikTok.</p>
+                </div>
+              </Link>
+            </div>
+
+            <div className="col-12 col-sm-6 col-lg-3">
               <Link to="/tools/character-counter" className="text-decoration-none">
                 <div className="tool-directory-card p-3 rounded-4 border h-100">
                   <div className="brand-icon mb-2" aria-hidden="true">
@@ -200,6 +245,18 @@ export default function Home() {
                   </div>
                   <h3 className="h6 fw-bold text-main mb-1">UTM Builder</h3>
                   <p className="text-muted small mb-0">Clean campaign tracking links with instant encoding.</p>
+                </div>
+              </Link>
+            </div>
+
+            <div className="col-12 col-sm-6 col-lg-3">
+              <Link to="/tools/search-console" className="text-decoration-none">
+                <div className="tool-directory-card p-3 rounded-4 border h-100">
+                  <div className="brand-icon mb-2" aria-hidden="true">
+                    <BarChart2 size={18} />
+                  </div>
+                  <h3 className="h6 fw-bold text-main mb-1">Search Console</h3>
+                  <p className="text-muted small mb-0">Connect Google OAuth for organic ranking data.</p>
                 </div>
               </Link>
             </div>

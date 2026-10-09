@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AlignLeft, Copy, XCircle, Info, Check } from 'lucide-react';
 import ToolHeader from '../../components/common/ToolHeader';
+import PageSeo from '../../components/common/PageSeo';
 import { PLATFORM_LIMITS, calculateTextStats } from '../../data/platformLimits';
 import { useToast } from '../../context/ToastContext';
 
@@ -31,6 +32,11 @@ export default function CharacterCounter() {
 
   return (
     <div className="container py-5" style={{ maxWidth: '960px' }}>
+      <PageSeo
+        title="Free Character & Word Counter with Platform Limits"
+        description="Count characters, words, and sentences in real-time. Includes Instagram, Twitter/X, LinkedIn, and YouTube caption character limit guidelines."
+        canonical="/tools/character-counter"
+      />
       <ToolHeader
         title="Character & Word Counter"
         description="Count characters, words, sentences, and spaces in real-time with platform limit guidance."

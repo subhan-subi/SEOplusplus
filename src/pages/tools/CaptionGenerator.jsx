@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MessageSquare, Copy, RotateCw, XCircle, Sparkles, Hash, Edit3 } from 'lucide-react';
 import ToolHeader from '../../components/common/ToolHeader';
+import PageSeo from '../../components/common/PageSeo';
 import { generateCaption, TONE_OPTIONS, PLATFORMS } from '../../data/captionTemplates';
 import { generateHashtags } from '../../data/hashtagData';
 import { useToast } from '../../context/ToastContext';
@@ -69,6 +70,11 @@ export default function CaptionGenerator() {
 
   return (
     <div className="container py-5" style={{ maxWidth: '920px' }}>
+      <PageSeo
+        title="Free Social Media Caption Generator"
+        description="Create professional, ready-to-edit Instagram, TikTok, and LinkedIn captions instantly. Template-based, no AI, no account required."
+        canonical="/tools/captions"
+      />
       <ToolHeader
         title="Template-based Caption Generator"
         description="Create ready-to-edit social media captions using customizable templates."

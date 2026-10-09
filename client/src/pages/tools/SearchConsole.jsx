@@ -25,6 +25,7 @@ import {
   fetchSearchPerformance,
   disconnectGsc,
 } from '../../services/gscService';
+import PageSeo from '../../components/common/PageSeo';
 
 /* ── Helper utilities ─────────────────────────────────────────────────────── */
 function fmt(n) {
@@ -291,6 +292,11 @@ export default function SearchConsolePage() {
   /* ── Render ─────────────────────────────────────────────────────────────── */
   return (
     <div className="gsc-page">
+      <PageSeo
+        title="Google Search Console Integration & Performance Analytics"
+        description="Connect Google Search Console to monitor real organic clicks, impressions, average CTR, and keyword rankings directly inside SEO++."
+        canonical="/tools/search-console"
+      />
       <div className="container py-5">
         {/* Page Title */}
         <div className="gsc-page-header mb-4">

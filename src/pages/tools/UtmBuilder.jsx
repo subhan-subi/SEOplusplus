@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link as LinkIcon, Copy, XCircle, RotateCcw, ExternalLink, Info, Check } from 'lucide-react';
 import ToolHeader from '../../components/common/ToolHeader';
+import PageSeo from '../../components/common/PageSeo';
 import { useToast } from '../../context/ToastContext';
 
 export default function UtmBuilder() {
@@ -73,6 +74,11 @@ export default function UtmBuilder() {
 
   return (
     <div className="container py-5" style={{ maxWidth: '920px' }}>
+      <PageSeo
+        title="Free UTM Campaign URL Builder"
+        description="Build campaign tracking URLs with UTM parameters instantly. Source, medium, campaign, term, and content support. No data leaves your browser."
+        canonical="/tools/utm-builder"
+      />
       <ToolHeader
         title="UTM Campaign URL Builder"
         description="Create campaign tracking URLs quickly and accurately with client-side URL encoding."

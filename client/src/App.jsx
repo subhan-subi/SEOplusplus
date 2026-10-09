@@ -1,17 +1,22 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import CookieConsent from './components/common/CookieConsent';
 
 // Pages
 import Home from './pages/Home';
 import Analyze from './pages/Analyze';
-// Company Pages
+
+// Company & Policy Pages
 import About from './pages/About';
+import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
+import Disclaimer from './pages/Disclaimer';
+import NotFound from './pages/NotFound';
 import WriteForUs from './pages/WriteForUs';
 
 // Blog & Content Publishing Pages
@@ -64,16 +69,19 @@ export default function App() {
                 <Route path="/tools/dr-checker" element={<DrChecker />} />
                 <Route path="/tools/keyword-finder" element={<KeywordFinder />} />
 
-                {/* Company Pages */}
+                {/* Company & Policy Pages */}
                 <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
+                <Route path="/disclaimer" element={<Disclaimer />} />
 
-                {/* Fallback */}
-                <Route path="*" element={<Navigate to="/" replace />} />
+                {/* 404 Fallback */}
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
             <Footer />
+            <CookieConsent />
           </div>
         </BrowserRouter>
       </ToastProvider>

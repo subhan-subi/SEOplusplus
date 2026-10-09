@@ -15,6 +15,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import ToolHeader from '../../components/common/ToolHeader';
+import PageSeo from '../../components/common/PageSeo';
 import { sanitizeClientDomain, validateClientDomain, checkDomainRating } from '../../services/drService';
 
 const SAMPLE_DOMAINS = [
@@ -132,6 +133,11 @@ export default function DrChecker() {
 
   return (
     <div className="container py-5" style={{ maxWidth: '920px' }}>
+      <PageSeo
+        title="Free Website Domain Rating (DR) Checker"
+        description="Check website Domain Rating (DR) and backlink authority tier metrics. Transparent evaluation using Ahrefs metrics and benchmarks."
+        canonical="/tools/dr-checker"
+      />
       <ToolHeader
         title="Domain Rating (DR) Checker"
         description="Check official Ahrefs Domain Rating (DR) for any website or domain to evaluate backlink authority on a 0-100 scale."

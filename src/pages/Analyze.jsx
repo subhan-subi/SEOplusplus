@@ -19,6 +19,7 @@ import {
   CheckCircle2,
   Info
 } from 'lucide-react';
+import PageSeo from '../components/common/PageSeo';
 
 export default function Analyze() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -70,6 +71,11 @@ export default function Analyze() {
 
   return (
     <div className="analyze-page pb-5">
+      <PageSeo
+        title={auditData?.url ? `SEO Audit Report for ${auditData.normalizedUrl || auditData.url}` : "Website SEO Audit Report"}
+        description="Free website audit report analyzing meta tags, page speed, mobile performance, security, and structured data with actionable recommendations."
+        canonical="/analyze"
+      />
       {/* Search Bar on top of Analyze Page */}
       <section className="py-4 border-bottom" style={{ backgroundColor: 'var(--bg-glass)' }}>
         <div className="container">
