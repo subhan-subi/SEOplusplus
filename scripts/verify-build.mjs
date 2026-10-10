@@ -42,8 +42,18 @@ for (const item of urls) {
     ? path.resolve(distDir, 'index.html') 
     : path.resolve(distDir, item.path, 'index.html');
 
+  const flatFilePath = item.path === ''
+    ? null
+    : path.resolve(distDir, `${item.path}.html`);
+
   if (!fs.existsSync(filePath)) {
     console.error(`❌ MISSING FILE: ${filePath}`);
+    failCount++;
+    continue;
+  }
+
+  if (flatFilePath && !fs.existsSync(flatFilePath)) {
+    console.error(`❌ MISSING FLAT FILE: ${flatFilePath}`);
     failCount++;
     continue;
   }

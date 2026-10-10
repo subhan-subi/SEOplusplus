@@ -214,9 +214,21 @@ async function prerender() {
 
     fs.writeFileSync(outFile, html, 'utf8');
     console.log(` ✓ Prerendered: ${route.url} -> ${path.relative(rootDir, outFile)}`);
+
+    // Also write flat .html file (e.g. dist/tools/dr-checker.html, dist/about.html)
+    // for seamless cleanUrls resolution on Vercel without trailing slash redirects
+    if (routePath) {
+      const flatFile = path.resolve(distDir, `${routePath}.html`);
+      const flatDir = path.dirname(flatFile);
+      if (!fs.existsSync(flatDir)) {
+        fs.mkdirSync(flatDir, { recursive: true });
+      }
+      fs.writeFileSync(flatFile, html, 'utf8');
+      console.log(` ✓ Flat HTML:   ${route.url} -> ${path.relative(rootDir, flatFile)}`);
+    }
   }
 
-  // Also write 404.html
+  // Also write 404.html and 404/index.html
   const notFoundRoute = {
     url: '/404',
     title: '404 – Page Not Found | SEO++',
@@ -229,7 +241,12 @@ async function prerender() {
   notFoundHtml = notFoundHtml.replace(/<meta\s+name="robots"\s+content="[^"]*"\s*\/?>/i, '<meta name="robots" content="noindex, nofollow" />');
   notFoundHtml = notFoundHtml.replace('<div id="root"></div>', `<div id="root">${notFoundBody}</div>`);
   fs.writeFileSync(path.resolve(distDir, '404.html'), notFoundHtml, 'utf8');
-  console.log(` ✓ Generated 404 fallback: dist/404.html`);
+  const notFoundSubDir = path.resolve(distDir, '404');
+  if (!fs.existsSync(notFoundSubDir)) {
+    fs.mkdirSync(notFoundSubDir, { recursive: true });
+  }
+  fs.writeFileSync(path.resolve(notFoundSubDir, 'index.html'), notFoundHtml, 'utf8');
+  console.log(` ✓ Generated 404 fallback: dist/404.html and dist/404/index.html`);
 
   // Clean up dist-ssr directory
   const distSsr = path.resolve(rootDir, 'dist-ssr');
