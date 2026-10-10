@@ -5,13 +5,15 @@ const ThemeContext = createContext();
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     // 1. Check saved user preference in localStorage
-    const saved = localStorage.getItem('seoly_theme');
-    if (saved === 'dark' || saved === 'light') {
-      return saved;
-    }
-    // 2. Fallback to system preference if no preference saved
-    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('seoly_theme');
+      if (saved === 'dark' || saved === 'light') {
+        return saved;
+      }
+      // 2. Fallback to system preference if no preference saved
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
     }
     // 3. Default to light
     return 'light';

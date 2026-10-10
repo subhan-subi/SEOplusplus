@@ -11,6 +11,7 @@ export default function PageSeo({
   title,
   description,
   canonicalUrl,
+  canonical,
   ogImage = DEFAULT_IMAGE,
   ogType = 'website',
   noindex = false,
@@ -47,8 +48,20 @@ export default function PageSeo({
       setMeta('description', description);
     }
 
-    // 2. Canonical URL
-    const finalCanonical = canonicalUrl || `${DEFAULT_ORIGIN}${location.pathname === '/' ? '/' : location.pathname.replace(/\/+$/, '')}`;
+    // 2. Canonical URL resolution
+    const rawCanonical = canonicalUrl || canonical;
+    let finalCanonical;
+    if (rawCanonical) {
+      if (rawCanonical.startsWith('http://') || rawCanonical.startsWith('https://')) {
+        finalCanonical = rawCanonical === `${DEFAULT_ORIGIN}/` ? rawCanonical : rawCanonical.replace(/\/+$/, '');
+      } else {
+        const cleanPath = rawCanonical.startsWith('/') ? rawCanonical : `/${rawCanonical}`;
+        finalCanonical = cleanPath === '/' ? `${DEFAULT_ORIGIN}/` : `${DEFAULT_ORIGIN}${cleanPath.replace(/\/+$/, '')}`;
+      }
+    } else {
+      finalCanonical = location.pathname === '/' ? `${DEFAULT_ORIGIN}/` : `${DEFAULT_ORIGIN}${location.pathname.replace(/\/+$/, '')}`;
+    }
+
     let canonicalEl = document.querySelector('link[rel="canonical"]');
     if (!canonicalEl) {
       canonicalEl = document.createElement('link');
@@ -57,7 +70,7 @@ export default function PageSeo({
     }
     canonicalEl.setAttribute('href', finalCanonical);
 
-    // 3. Robots directive (if noindex)
+    // 3. Robots directive
     if (noindex) {
       setMeta('robots', 'noindex, nofollow');
     } else {
@@ -95,7 +108,7 @@ export default function PageSeo({
           '@type': 'ListItem',
           position: idx + 1,
           name: crumb.name,
-          item: crumb.url?.startsWith('http') ? crumb.url : `${DEFAULT_ORIGIN}${crumb.url || ''}`
+          item: crumb.url?.startsWith('http') ? crumb.url : `${DEFAULT_ORIGIN}${crumb.url?.startsWith('/') ? crumb.url : `/${crumb.url || ''}`}`
         }))
       };
       scriptEl.textContent = JSON.stringify(schema);
@@ -106,7 +119,7 @@ export default function PageSeo({
       const el = document.getElementById(jsonLdId);
       if (el) el.remove();
     };
-  }, [title, description, canonicalUrl, ogImage, ogType, noindex, breadcrumbs, location.pathname]);
+  }, [title, description, canonicalUrl, canonical, ogImage, ogType, noindex, breadcrumbs, location.pathname]);
 
   return null;
 }

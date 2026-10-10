@@ -75,6 +75,7 @@ export default function Analyze() {
         title={auditData?.url ? `SEO Audit Report for ${auditData.normalizedUrl || auditData.url}` : "Website SEO Audit Report"}
         description="Free website audit report analyzing meta tags, page speed, mobile performance, security, and structured data with actionable recommendations."
         canonical="/analyze"
+        noindex={true}
       />
       {/* Search Bar on top of Analyze Page */}
       <section className="py-4 border-bottom" style={{ backgroundColor: 'var(--bg-glass)' }}>

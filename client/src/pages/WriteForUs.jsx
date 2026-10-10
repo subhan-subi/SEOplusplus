@@ -67,7 +67,7 @@ export default function WriteForUs() {
   return (
     <div className="write-for-us-page pb-5">
       <BlogSeo
-        title="Write for Us &amp; Publish with SEO++ | Editorial Guidelines &amp; Sponsored Pitches"
+        title="Write for Us & Publish with SEO++ | Editorial Guidelines & Sponsored Pitches"
         description="Contribute to SEO++. We publish actionable SEO guides, website growth case studies, and sponsored articles. Submit your pitch to our editorial team."
         canonicalUrl="https://seoplusplus.vercel.app/write-for-us"
         ogType="website"

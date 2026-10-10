@@ -83,8 +83,8 @@ export default function Privacy() {
             We use browser storage to provide core site functionality and maintain user preferences:
           </p>
           <ul className="text-secondary small mb-3 ps-3">
-            <li><strong>Visual Theme Preference:</strong> Browser <code>localStorage</code> saves your chosen appearance (<code>SEO++_theme</code>: light or dark) so it persists across visits.</li>
-            <li><strong>Audit Caching:</strong> In the SEO Checker, recent audit results may be held in temporary <code>sessionStorage</code> (<code>SEO++_last_audit</code>) to prevent duplicate requests when refreshing the page.</li>
+            <li><strong>Visual Theme Preference:</strong> Browser <code>localStorage</code> saves your chosen appearance (<code>seoly_theme</code>: light or dark) so it persists across visits.</li>
+            <li><strong>Audit Caching:</strong> In the SEO Checker, recent audit results may be held in temporary <code>sessionStorage</code> (<code>seoly_last_audit</code>) to prevent duplicate requests when refreshing the page.</li>
             <li><strong>Session Authentication (GSC):</strong> For connected Google Search Console users, an encrypted, <code>httpOnly</code>, <code>SameSite=None</code>, <code>Secure</code> cookie (<code>gsc_session</code>) is used solely to maintain your connection between requests.</li>
             <li><strong>Cookie Consent Preference:</strong> Your cookie banner selection is remembered in <code>localStorage</code> (<code>seoplusplus_cookie_consent</code>).</li>
           </ul>

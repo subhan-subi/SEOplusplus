@@ -36,53 +36,59 @@ import SearchConsole from './pages/tools/SearchConsole';
 import DrChecker from './pages/tools/DrChecker';
 import KeywordFinder from './pages/tools/KeywordFinder';
 
+export function AppContent() {
+  return (
+    <div className="d-flex flex-column min-vh-100">
+      <Navbar />
+      <main className="flex-grow-1">
+        <Routes>
+          {/* SEO Checker Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/analyze" element={<Analyze />} />
+
+          {/* SEO++ Blog & Knowledge Platform */}
+          <Route path="/blog" element={<BlogList />} />
+          <Route path="/blog/:slug" element={<ArticleDetail />} />
+          <Route path="/blog/manage" element={<BlogAdmin />} />
+
+          {/* Write for Us / Editorial Inquiries */}
+          <Route path="/write-for-us" element={<WriteForUs />} />
+
+          {/* Toolkit Directory & Tools */}
+          <Route path="/tools" element={<ToolsDirectory />} />
+          <Route path="/tools/hashtags" element={<HashtagGenerator />} />
+          <Route path="/tools/captions" element={<CaptionGenerator />} />
+          <Route path="/tools/hooks" element={<HookGenerator />} />
+          <Route path="/tools/content-ideas" element={<ContentIdeas />} />
+          <Route path="/tools/character-counter" element={<CharacterCounter />} />
+          <Route path="/tools/utm-builder" element={<UtmBuilder />} />
+          <Route path="/tools/search-console" element={<SearchConsole />} />
+          <Route path="/tools/dr-checker" element={<DrChecker />} />
+          <Route path="/tools/keyword-finder" element={<KeywordFinder />} />
+
+          {/* Company & Policy Pages */}
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
+
+          {/* 404 Fallback */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      <Footer />
+      <CookieConsent />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <ThemeProvider>
       <ToastProvider>
         <BrowserRouter>
-          <div className="d-flex flex-column min-vh-100">
-            <Navbar />
-            <main className="flex-grow-1">
-              <Routes>
-                {/* SEO Checker Routes */}
-                <Route path="/" element={<Home />} />
-                <Route path="/analyze" element={<Analyze />} />
-
-                {/* SEO++ Blog & Knowledge Platform */}
-                <Route path="/blog" element={<BlogList />} />
-                <Route path="/blog/:slug" element={<ArticleDetail />} />
-                <Route path="/blog/manage" element={<BlogAdmin />} />
-
-                {/* Write for Us / Editorial Inquiries */}
-                <Route path="/write-for-us" element={<WriteForUs />} />
-
-                {/* Toolkit Directory & Tools */}
-                <Route path="/tools" element={<ToolsDirectory />} />
-                <Route path="/tools/hashtags" element={<HashtagGenerator />} />
-                <Route path="/tools/captions" element={<CaptionGenerator />} />
-                <Route path="/tools/hooks" element={<HookGenerator />} />
-                <Route path="/tools/content-ideas" element={<ContentIdeas />} />
-                <Route path="/tools/character-counter" element={<CharacterCounter />} />
-                <Route path="/tools/utm-builder" element={<UtmBuilder />} />
-                <Route path="/tools/search-console" element={<SearchConsole />} />
-                <Route path="/tools/dr-checker" element={<DrChecker />} />
-                <Route path="/tools/keyword-finder" element={<KeywordFinder />} />
-
-                {/* Company & Policy Pages */}
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/disclaimer" element={<Disclaimer />} />
-
-                {/* 404 Fallback */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
-            <Footer />
-            <CookieConsent />
-          </div>
+          <AppContent />
         </BrowserRouter>
       </ToastProvider>
     </ThemeProvider>

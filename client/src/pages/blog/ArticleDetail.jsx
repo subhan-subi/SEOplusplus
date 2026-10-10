@@ -10,6 +10,7 @@ import {
   Info
 } from 'lucide-react';
 import { fetchArticleBySlug } from '../../services/blogService';
+import { FALLBACK_ARTICLES } from '../../data/fallbackArticles';
 import BlogSeo from '../../components/blog/BlogSeo';
 import BlogToolCta from '../../components/blog/BlogToolCta';
 import ShareButtons from '../../components/blog/ShareButtons';
@@ -21,28 +22,51 @@ export default function ArticleDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
 
-  const [article, setArticle] = useState(null);
-  const [relatedArticles, setRelatedArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [article, setArticle] = useState(() => {
+    if (slug) {
+      const found = FALLBACK_ARTICLES.find((a) => a.slug === slug);
+      if (found) return found;
+    }
+    return null;
+  });
+  const [relatedArticles, setRelatedArticles] = useState(() => {
+    if (slug) {
+      const found = FALLBACK_ARTICLES.find((a) => a.slug === slug);
+      if (found) {
+        return FALLBACK_ARTICLES.filter((a) => a.slug !== slug && a.category === found.category);
+      }
+    }
+    return [];
+  });
+  const [loading, setLoading] = useState(() => {
+    if (slug) {
+      const found = FALLBACK_ARTICLES.find((a) => a.slug === slug);
+      return !found;
+    }
+    return true;
+  });
   const [error, setError] = useState(null);
 
   useEffect(() => {
     async function loadArticle() {
       if (!slug) return;
-      setLoading(true);
-      setError(null);
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
 
       try {
         const data = await fetchArticleBySlug(slug);
         if (data?.article) {
           setArticle(data.article);
           setRelatedArticles(data.relatedArticles || []);
-        } else {
+          setError(null);
+        } else if (!article) {
           setError('Article not found or is currently private.');
         }
       } catch (err) {
-        setError(err.message || 'We could not load this article. Please check the URL.');
+        if (!article) {
+          setError(err.message || 'We could not load this article. Please check the URL.');
+        }
       } finally {
         setLoading(false);
       }

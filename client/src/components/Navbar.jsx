@@ -316,6 +316,10 @@ export default function Navbar() {
                 <Link to="/about" className={`mobile-nav-link ${isAboutActive ? 'active' : ''}`}>
                   <span>About {BRAND.name}</span>
                 </Link>
+                <Link to="/contact" className={`mobile-nav-link ${location.pathname === '/contact' ? 'active' : ''}`}>
+                  <MessageSquare size={16} />
+                  <span>Contact Us</span>
+                </Link>
               </div>
             </div>
           </div>

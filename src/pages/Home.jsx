@@ -14,9 +14,11 @@ import {
   Link as LinkIcon, 
   ArrowRight,
   TrendingUp,
-  Key
+  Key,
+  BookOpen
 } from 'lucide-react';
 import { BRAND } from '../config/brand';
+import { FALLBACK_ARTICLES } from '../data/fallbackArticles';
 import UrlAnalyzer from '../components/UrlAnalyzer';
 import PageSeo from '../components/common/PageSeo';
 
@@ -260,6 +262,50 @@ export default function Home() {
                 </div>
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured SEO & Technical Guides Section */}
+      <section className="py-5 border-bottom" aria-label="Featured SEO Guides">
+        <div className="container py-2">
+          <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
+            <div>
+              <span className="badge-subtle-primary mb-2 d-inline-block">Knowledge Hub</span>
+              <h2 className="h3 fw-bold mb-1 text-main">Featured SEO Guides &amp; Playbooks</h2>
+              <p className="text-secondary small mb-0">Actionable tutorials on crawling, indexing, search analytics, and CTR optimization.</p>
+            </div>
+            <Link to="/blog" className="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1">
+              <span>View All Articles</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="row g-3">
+            {FALLBACK_ARTICLES.slice(0, 6).map((art) => (
+              <div key={art.slug} className="col-12 col-md-6 col-lg-4">
+                <Link to={`/blog/${art.slug}`} className="text-decoration-none d-block h-100">
+                  <div className="tool-directory-card p-4 rounded-4 border h-100 d-flex flex-column justify-content-between">
+                    <div>
+                      <div className="d-flex align-items-center justify-content-between mb-2">
+                        <span className="check-category-pill">{art.category}</span>
+                        <span className="text-muted small">{art.readingTime} min read</span>
+                      </div>
+                      <h3 className="h6 fw-bold text-main mb-2" style={{ lineHeight: '1.4' }}>
+                        {art.title}
+                      </h3>
+                      <p className="text-secondary small mb-3" style={{ lineHeight: '1.5' }}>
+                        {art.excerpt}
+                      </p>
+                    </div>
+                    <div className="d-flex align-items-center text-primary fw-medium small gap-1 mt-auto">
+                      <span>Read Guide</span>
+                      <ArrowRight size={14} />
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </section>

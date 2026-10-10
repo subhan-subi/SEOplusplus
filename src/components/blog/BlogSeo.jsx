@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+const DEFAULT_ORIGIN = 'https://seoplusplus.vercel.app';
+
 /**
  * Updates head meta tags and JSON-LD structured data dynamically for Blog pages.
  */
@@ -7,6 +9,7 @@ export default function BlogSeo({
   title,
   description,
   canonicalUrl,
+  canonical,
   ogImage,
   ogType = 'article',
   publishedAt,
@@ -18,9 +21,12 @@ export default function BlogSeo({
   useEffect(() => {
     // 1. Update Document Title
     const originalTitle = document.title;
-    if (title) {
-      document.title = title.includes('SEO++') ? title : `${title} | SEO++ Blog`;
-    }
+    const cleanTitle = title ? title.replace(/&amp;/g, '&') : '';
+    const computedTitle = cleanTitle
+      ? (cleanTitle.includes('SEO++') ? cleanTitle : `${cleanTitle} | SEO++ Blog`)
+      : 'SEO++ Blog – Proven Search Engine Optimization & Growth Guides';
+
+    document.title = computedTitle;
 
     // Helper to set or create meta tags
     function setMeta(name, content, isProperty = false) {
@@ -45,19 +51,30 @@ export default function BlogSeo({
     }
 
     // 3. Canonical URL
+    const rawCanonical = canonicalUrl || canonical;
+    let finalCanonical;
+    if (rawCanonical) {
+      if (rawCanonical.startsWith('http://') || rawCanonical.startsWith('https://')) {
+        finalCanonical = rawCanonical === `${DEFAULT_ORIGIN}/` ? rawCanonical : rawCanonical.replace(/\/+$/, '');
+      } else {
+        const cleanPath = rawCanonical.startsWith('/') ? rawCanonical : `/${rawCanonical}`;
+        finalCanonical = cleanPath === '/' ? `${DEFAULT_ORIGIN}/` : `${DEFAULT_ORIGIN}${cleanPath.replace(/\/+$/, '')}`;
+      }
+    } else {
+      finalCanonical = `${DEFAULT_ORIGIN}${window.location.pathname.replace(/\/+$/, '')}`;
+    }
+
     let canonicalEl = document.querySelector('link[rel="canonical"]');
-    if (!canonicalEl && canonicalUrl) {
+    if (!canonicalEl) {
       canonicalEl = document.createElement('link');
       canonicalEl.setAttribute('rel', 'canonical');
       document.head.appendChild(canonicalEl);
     }
-    if (canonicalEl && canonicalUrl) {
-      canonicalEl.setAttribute('href', canonicalUrl);
-    }
+    canonicalEl.setAttribute('href', finalCanonical);
 
     // 4. Open Graph Tags
-    const fullUrl = canonicalUrl || window.location.href;
-    setMeta('og:title', title || document.title, true);
+    const fullUrl = finalCanonical;
+    setMeta('og:title', computedTitle, true);
     if (description) setMeta('og:description', description, true);
     setMeta('og:url', fullUrl, true);
     setMeta('og:type', ogType, true);

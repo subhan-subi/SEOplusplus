@@ -147,7 +147,10 @@
    -------------------------------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { 
+  scroll-behavior: smooth; 
+  overflow-x: hidden;
+}
 
 body {
   margin: 0;
@@ -160,12 +163,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
   transition: background-color var(--transition-theme), color var(--transition-theme);
   min-height: 100vh;
+  overflow-x: hidden;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 #root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 a {
@@ -175,9 +183,26 @@ a {
 }
 a:hover { color: var(--primary-hover); }
 
+/* Accessibility & Keyboard Navigation (WCAG 2.1 AA) */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible, 
+a:focus-visible, 
+input:focus-visible, 
+select:focus-visible, 
+textarea:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 code, kbd, samp, pre {
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
   font-size: 0.875em;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .site-header, .site-footer, .check-card, .score-card,

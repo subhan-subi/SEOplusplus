@@ -13,6 +13,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { fetchArticles, fetchCategories } from '../../services/blogService';
+import { FALLBACK_ARTICLES, FALLBACK_CATEGORIES } from '../../data/fallbackArticles';
 import BlogCard from '../../components/blog/BlogCard';
 import FeaturedArticle from '../../components/blog/FeaturedArticle';
 import { BlogHeroSkeleton, BlogCardSkeleton } from '../../components/blog/BlogSkeleton';
@@ -38,19 +39,19 @@ export default function BlogList() {
   const searchQuery = searchParams.get('q') || '';
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
-  // Local state
+  // Local state initialized with fallback data for instant SSR and fast hydration
   const [searchInput, setSearchInput] = useState(searchQuery);
-  const [articles, setArticles] = useState([]);
-  const [featuredArticle, setFeaturedArticle] = useState(null);
-  const [categories, setCategories] = useState([]);
+  const [articles, setArticles] = useState(() => FALLBACK_ARTICLES);
+  const [featuredArticle, setFeaturedArticle] = useState(() => FALLBACK_ARTICLES.find((a) => a.isFeatured) || FALLBACK_ARTICLES[0]);
+  const [categories, setCategories] = useState(() => FALLBACK_CATEGORIES);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
-    totalArticles: 0,
+    totalArticles: FALLBACK_ARTICLES.length,
     hasNextPage: false,
     hasPrevPage: false
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Sync search input when url changes

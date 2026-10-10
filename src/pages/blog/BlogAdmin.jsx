@@ -34,6 +34,7 @@ import {
   updateAdminInquiryStatus 
 } from '../../services/blogService';
 import { useToast } from '../../context/ToastContext';
+import PageSeo from '../../components/common/PageSeo';
 
 const BLOG_CATEGORIES = [
   'SEO Basics',
@@ -357,6 +358,11 @@ export default function BlogAdmin() {
   if (!isAuthenticated) {
     return (
       <div className="container py-5" style={{ maxWidth: '480px' }}>
+        <PageSeo
+          title="Editorial Management Portal"
+          description="SEO++ Editorial Administration"
+          noindex={true}
+        />
         <div className="p-4 p-md-5 rounded-4 border blog-admin-card my-5 text-center">
           <div className="brand-icon mx-auto mb-3" aria-hidden="true">
             <Lock size={22} />
@@ -417,6 +423,11 @@ export default function BlogAdmin() {
   // -------------------------------------------------------------
   return (
     <div className="blog-admin-portal pb-5">
+      <PageSeo
+        title="Editorial Management Portal"
+        description="SEO++ Editorial Administration"
+        noindex={true}
+      />
       {/* Admin Top Header */}
       <header className="blog-admin-header py-3 border-bottom bg-card">
         <div className="container d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">

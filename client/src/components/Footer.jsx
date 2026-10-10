@@ -66,7 +66,7 @@ export default function Footer() {
                 <Cookie size={13} className="text-muted" />
                 <span>Cookie Preferences</span>
               </button>
-              <Link to="/blog/manage" className="footer-link text-muted mt-1" style={{ fontSize: '0.75rem' }}>Editorial Portal</Link>
+              <Link to="/blog/manage" rel="nofollow" className="footer-link text-muted mt-1" style={{ fontSize: '0.75rem' }}>Editorial Portal</Link>
             </nav>
           </div>
         </div>
