@@ -271,6 +271,37 @@ export default function ContentIdeas() {
           </p>
         </div>
       )}
+
+      {/* Educational Guide: Content Ideation & Pillar-Cluster Method */}
+      <div className="card p-4 rounded-4 border mt-4" style={{ background: 'var(--bg-card)' }}>
+        <h3 className="h6 fw-bold text-main mb-3">The Content Pillar &amp; Topic Clustering Method</h3>
+        <div className="row g-3 small">
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">Repurposing Pillar Topics</div>
+              <p className="text-secondary mb-0">
+                A single pillar subject can branch into five distinct formats: beginner tutorials, common misconceptions, comparison breakdowns, case studies, and actionable checklists. This multiplies output while reinforcing thematic authority.
+              </p>
+            </div>
+          </div>
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">Matching Format to Search Intent</div>
+              <p className="text-secondary mb-0">
+                Align format with audience motivation: 'How-to' tutorials target search discovery and bookmarking; thought-provoking contrarian pieces spark discussion in social feeds; comparison lists convert high-intent evaluators.
+              </p>
+            </div>
+          </div>
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">Testing Content Angles</div>
+              <p className="text-secondary mb-0">
+                Test the same core premise with contrasting hooks and visual presentations. Tracking which angle generates higher initial retention highlights where your market has unresolved curiosity or pain points.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

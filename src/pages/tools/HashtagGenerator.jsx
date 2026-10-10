@@ -271,6 +271,37 @@ export default function HashtagGenerator() {
           </p>
         </div>
       )}
+
+      {/* Educational Guide: Strategic Hashtag Usage */}
+      <div className="card p-4 rounded-4 border mt-4" style={{ background: 'var(--bg-card)' }}>
+        <h3 className="h6 fw-bold text-main mb-3">Strategic Hashtag Selection &amp; Distribution</h3>
+        <div className="row g-3 small">
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">Tiered Tag Sizing Strategy</div>
+              <p className="text-secondary mb-0">
+                Blend high-volume broad tags with mid-tail and niche community tags (10k–100k posts). Mega tags move too quickly for discovery, while targeted community tags offer longer shelf-life on exploration and search pages.
+              </p>
+            </div>
+          </div>
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">Platform Quantity Guidelines</div>
+              <p className="text-secondary mb-0">
+                Quality over quantity: Instagram officially recommends 3–5 hyper-relevant tags rather than 30 generic tags. LinkedIn functions best with 3–5 industry tags, while TikTok leverages 3–6 mixed trending and descriptive topic tags.
+              </p>
+            </div>
+          </div>
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">Hashtag Placement &amp; Spacing</div>
+              <p className="text-secondary mb-0">
+                Place tags at the bottom of the caption or in the first comment to keep the main reading area clean. Cluttering the introductory hook with hashtags reduces early read-through rates and click-through actions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

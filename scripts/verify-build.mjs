@@ -84,6 +84,32 @@ for (const item of urls) {
   }
 }
 
+// Audit utility route: /analyze
+console.log('=== AUDITING UTILITY ROUTE: /analyze ===\n');
+const analyzeFilePath = path.resolve(distDir, 'analyze', 'index.html');
+const analyzeFlatPath = path.resolve(distDir, 'analyze.html');
+
+if (!fs.existsSync(analyzeFilePath) || !fs.existsSync(analyzeFlatPath)) {
+  console.error(`❌ MISSING UTILITY FILES for /analyze`);
+  failCount++;
+} else {
+  const analyzeContent = fs.readFileSync(analyzeFilePath, 'utf8');
+  const hasNoIndex = analyzeContent.includes('<meta name="robots" content="noindex, nofollow" />');
+  const hasAnalyzeCanonical = analyzeContent.includes('<link rel="canonical" href="https://seoplusplus.vercel.app/analyze" />');
+  const hasRoot = !analyzeContent.includes('<div id="root"></div>');
+
+  if (hasNoIndex && hasAnalyzeCanonical && hasRoot) {
+    console.log(`✅ [OK] Utility Route: https://seoplusplus.vercel.app/analyze`);
+    console.log(`   Robots Directive: noindex, nofollow (VERIFIED)`);
+    console.log(`   Canonical: https://seoplusplus.vercel.app/analyze (VERIFIED)\n`);
+    passCount++;
+  } else {
+    console.error(`❌ [FAIL] Utility Route /analyze has invalid directives:`);
+    console.error(`   Has noindex: ${hasNoIndex}, Has canonical: ${hasAnalyzeCanonical}\n`);
+    failCount++;
+  }
+}
+
 console.log(`\nAudit Summary: ${passCount} PASSED, ${failCount} FAILED.`);
 if (failCount > 0) {
   process.exit(1);

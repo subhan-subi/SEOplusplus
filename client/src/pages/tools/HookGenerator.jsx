@@ -252,6 +252,37 @@ export default function HookGenerator() {
           </p>
         </div>
       )}
+
+      {/* Educational Guide: Hook Retention & Engagement */}
+      <div className="card p-4 rounded-4 border mt-4" style={{ background: 'var(--bg-card)' }}>
+        <h3 className="h6 fw-bold text-main mb-3">Short-Form Hook Retention Frameworks</h3>
+        <div className="row g-3 small">
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">The 3-Second Retention Window</div>
+              <p className="text-secondary mb-0">
+                Algorithms on TikTok, Instagram Reels, and YouTube Shorts prioritize early viewer retention. The opening 1–3 seconds dictate whether the algorithm tests your video with wider audiences or halts distribution.
+              </p>
+            </div>
+          </div>
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">High-Performing Angle Types</div>
+              <p className="text-secondary mb-0">
+                Structure opening lines around curiosity gaps, contrarian viewpoints, or concrete transformations. Clear problem-agitation statements resonate strongly because viewers immediately recognize their own challenges.
+              </p>
+            </div>
+          </div>
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">Multi-Modal Hook Delivery</div>
+              <p className="text-secondary mb-0">
+                Pair spoken opening lines with bold on-screen text overlays. Over 60% of social media users browse with audio muted, so visual hook clarity is as critical as verbal delivery.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

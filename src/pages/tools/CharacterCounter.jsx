@@ -183,6 +183,37 @@ export default function CharacterCounter() {
           Platform limits are compiled from public developer documentation. Character counting calculations occur entirely in your local browser and no text is transmitted over the network.
         </div>
       </div>
+
+      {/* Educational Guide: Search & Social Character Guidelines */}
+      <div className="card p-4 rounded-4 border mt-4" style={{ background: 'var(--bg-card)' }}>
+        <h3 className="h6 fw-bold text-main mb-3">Understanding Search &amp; Social Character Guidelines</h3>
+        <div className="row g-3 small">
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">Search Engine Snippets</div>
+              <p className="text-secondary mb-0">
+                Google displays titles and descriptions based on pixel widths (~580–600px for desktop titles, ~960px for descriptions). General recommendations of 50–60 characters for titles and 150–160 characters for descriptions serve as practical rules of thumb to prevent truncation, though Google may dynamically rewrite snippets based on query context.
+              </p>
+            </div>
+          </div>
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">Social Feed Thresholds</div>
+              <p className="text-secondary mb-0">
+                Platforms truncate text before user expansion: Instagram cuts off after ~125 characters; LinkedIn allows up to 3,000 characters but truncates previews around 140–210 characters; TikTok descriptions support up to 2,200 characters but 100–150 characters fit mobile overlays cleanly. X (Twitter) enforces 280 characters for standard posts.
+              </p>
+            </div>
+          </div>
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">Text Readability &amp; Density</div>
+              <p className="text-secondary mb-0">
+                Shorter paragraphs and sentences averaging 15–20 words improve reading ease on handheld devices. Spacing out text with bullet points or line breaks increases comprehension and time-on-page metrics.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

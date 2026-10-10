@@ -254,6 +254,37 @@ export default function CaptionGenerator() {
           </p>
         </div>
       )}
+
+      {/* Educational Guide: High-Engagement Caption Structures */}
+      <div className="card p-4 rounded-4 border mt-4" style={{ background: 'var(--bg-card)' }}>
+        <h3 className="h6 fw-bold text-main mb-3">High-Engagement Caption Structures</h3>
+        <div className="row g-3 small">
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">The 3-Part Caption Blueprint</div>
+              <p className="text-secondary mb-0">
+                Structure your text into a clear progression: a compelling opening line before the cutoff fold, a value-packed core body explaining the insight, and a single, unambiguous call to action (comment, save, or visit link).
+              </p>
+            </div>
+          </div>
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">Platform Tone Alignment</div>
+              <p className="text-secondary mb-0">
+                Tailor your voice to platform expectations: LinkedIn audiences engage with professional career lessons and strategic insights, whereas Instagram and TikTok prioritize concise storytelling, humor, and digestible visual spacing.
+              </p>
+            </div>
+          </div>
+          <div className="col-12 col-md-4">
+            <div className="p-3 rounded-3 border h-100" style={{ background: 'var(--bg-subtle)' }}>
+              <div className="fw-bold text-main mb-1">Formatting for Readability</div>
+              <p className="text-secondary mb-0">
+                Break up text with frequent paragraph breaks and short lines. Dense walls of text cause mobile users to scroll past, while clean spacing encourages full caption reads and bookmarking.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
