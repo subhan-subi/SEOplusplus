@@ -8,6 +8,9 @@ import CategoryScores from '../components/CategoryScores';
 import Recommendations from '../components/Recommendations';
 import IssuesSection from '../components/IssuesSection';
 import UrlAnalyzer from '../components/UrlAnalyzer';
+import ExportReportControls from '../components/common/ExportReportControls';
+import SeoScoreCharts from '../components/common/SeoScoreCharts';
+import { exportSeoReportPdf, exportSeoReportCsv, printSeoReport } from '../utils/seoReportExporter';
 import { 
   Globe, 
   Clock, 
@@ -155,13 +158,22 @@ export default function Analyze() {
                   </div>
                 </div>
 
-                <button
-                  onClick={handleReanalyze}
-                  className="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1"
-                >
-                  <RotateCw size={14} />
-                  <span>Re-analyze</span>
-                </button>
+                <div className="d-flex align-items-center flex-wrap gap-2">
+                  <ExportReportControls
+                    reportType="SEO"
+                    targetName={auditData.normalizedUrl || auditData.url}
+                    onExportPdf={() => exportSeoReportPdf(auditData)}
+                    onExportCsv={() => exportSeoReportCsv(auditData)}
+                    onPrint={() => printSeoReport()}
+                  />
+                  <button
+                    onClick={handleReanalyze}
+                    className="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1"
+                  >
+                    <RotateCw size={14} />
+                    <span>Re-analyze</span>
+                  </button>
+                </div>
               </div>
 
               {/* Meta metrics bar */}
@@ -201,6 +213,9 @@ export default function Analyze() {
                 <CategoryScores categories={auditData.categories} />
               </div>
             </div>
+
+            {/* Visual Charts: Score Breakdown & Checks Distribution */}
+            <SeoScoreCharts categories={auditData.categories} summary={auditData.summary} />
 
             {/* Prioritized Recommendations */}
             <Recommendations recommendations={auditData.recommendations} />

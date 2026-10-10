@@ -2694,5 +2694,132 @@ code, kbd, samp, pre {
   animation: spin 1s linear infinite;
 }
 
+/* --------------------------------------------------------------------------
+   Export Report Controls & Print Layout Styling
+   -------------------------------------------------------------------------- */
+.export-controls-wrap {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.export-controls-wrap .btn {
+  font-size: 0.8125rem;
+  padding: 0.38rem 0.75rem;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.seo-audit-charts-row .progress {
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.dr-authority-spectrum-card {
+  position: relative;
+  overflow: visible;
+}
+
+/* ==========================================================================
+   Print Stylesheet — Dedicated, Professional Clean Document Printing
+   ========================================================================== */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 1.2cm 1cm 1.2cm 1cm;
+  }
+
+  /* Hide interactive, navigational, and non-printable components */
+  nav,
+  header.site-header,
+  .site-header,
+  .site-footer,
+  .export-controls-wrap,
+  .url-input-group,
+  .quick-samples,
+  .analyzer-card form,
+  .btn,
+  button,
+  .cookie-banner,
+  .toast-container-fixed,
+  .re-analyze-button,
+  .quick-sample-chip,
+  .hero-features,
+  .tools-nav-pill,
+  .theme-toggle-btn {
+    display: none !important;
+  }
+
+  /* Reset document canvas to clean white */
+  html, body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 10pt !important;
+    line-height: 1.4 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Clean print cards */
+  .report-header-card,
+  .tool-directory-card,
+  .score-card,
+  .category-card,
+  .check-card,
+  .recommendations-box,
+  .dr-authority-spectrum-card,
+  .audit-disclaimer-box {
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 12pt !important;
+    border-radius: 6px !important;
+  }
+
+  /* Expand all collapsed audit checks for print */
+  .check-card .check-card-body {
+    display: block !important;
+  }
+
+  /* Color preservation for score badges and progress bars */
+  .badge,
+  .score-number,
+  .category-score-val,
+  .progress-bar,
+  .status-indicator-icon,
+  .rec-priority-badge {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Avoid page breaks inside table rows */
+  table, tr, td, th {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Add clean print document top banner */
+  body::before {
+    content: "SEO++ Audit Report  •  https://seoplusplus.vercel.app/  •  Confidential & Educational";
+    display: block;
+    text-align: center;
+    font-size: 8pt;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 14pt;
+    padding-bottom: 6pt;
+    border-bottom: 1px solid #e2e8f0;
+  }
+}
+
+
 
 

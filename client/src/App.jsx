@@ -5,6 +5,7 @@ import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CookieConsent from './components/common/CookieConsent';
+import { Analytics } from '@vercel/analytics/react';
 
 // Pages
 import Home from './pages/Home';
@@ -89,6 +90,7 @@ export default function App() {
       <ToastProvider>
         <BrowserRouter>
           <AppContent />
+          <Analytics />
         </BrowserRouter>
       </ToastProvider>
     </ThemeProvider>

@@ -16,6 +16,9 @@ import {
 } from 'lucide-react';
 import ToolHeader from '../../components/common/ToolHeader';
 import PageSeo from '../../components/common/PageSeo';
+import ExportReportControls from '../../components/common/ExportReportControls';
+import DrAuthorityChart from '../../components/common/DrAuthorityChart';
+import { exportDrReportPdf, exportDrReportCsv, printDrReport } from '../../utils/drReportExporter';
 import { sanitizeClientDomain, validateClientDomain, checkDomainRating } from '../../services/drService';
 
 const SAMPLE_DOMAINS = [
@@ -259,17 +262,27 @@ export default function DrChecker() {
               </span>
             </div>
 
-            <div className="d-flex align-items-center gap-2 flex-wrap">
-              <h2 className="audit-target-url m-0 h4">{result.domain || result.target}</h2>
-              <a
-                href={`https://${result.domain || result.target}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-secondary small d-inline-flex align-items-center gap-1 ms-1"
-                title="Visit website"
-              >
-                <ExternalLink size={14} />
-              </a>
+            <div className="d-flex align-items-center justify-content-between flex-wrap gap-3 my-2">
+              <div className="d-flex align-items-center gap-2 flex-wrap">
+                <h2 className="audit-target-url m-0 h4">{result.domain || result.target}</h2>
+                <a
+                  href={`https://${result.domain || result.target}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-secondary small d-inline-flex align-items-center gap-1 ms-1"
+                  title="Visit website"
+                >
+                  <ExternalLink size={14} />
+                </a>
+              </div>
+
+              <ExportReportControls
+                reportType="DR"
+                targetName={result.domain || result.target}
+                onExportPdf={() => exportDrReportPdf(result, tier)}
+                onExportCsv={() => exportDrReportCsv(result, tier)}
+                onPrint={() => printDrReport()}
+              />
             </div>
 
             <div className="audit-meta-row mt-2">
@@ -393,6 +406,9 @@ export default function DrChecker() {
               </div>
             </div>
           </div>
+
+          {/* Visual DR Authority Spectrum & Benchmarks Chart */}
+          <DrAuthorityChart result={result} tier={tier} />
 
           {/* Official Ahrefs Metric Notice Box */}
           <div className="p-4 rounded-4 border bg-subtle mb-4" style={{ background: 'var(--bg-card)' }}>
