@@ -48,8 +48,8 @@
   ],
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "source": "/((?!_next|assets|favicon\\.svg|icons\\.svg|og-preview\\.(png|jpg)|robots\\.txt|sitemap\\.xml).*)",
+      "destination": "/index.html"
     }
   ]
 }
